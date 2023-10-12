@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #libs
+    "storages",
     'widget_tweaks',
     #Mis apps
     'core.erp',

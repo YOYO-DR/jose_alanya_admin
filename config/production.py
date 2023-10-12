@@ -11,8 +11,6 @@ CSRF_TRUSTED_ORIGINS = ['https://' + os.environ['WEBSITE_HOSTNAME']] if 'WEBSITE
 #ponemos el DEBUG en false porque se va a ejecutar en produccion
 DEBUG = False
 
-INSTALLED_APPS.append('storages')
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     # Add whitenoise middleware after the security middleware
@@ -26,8 +24,6 @@ MIDDLEWARE = [
 ]
 # agregamos el storage
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' 
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 #Pedimos la config de la base de datos 
 conn_str = os.environ['AZURE_MYSQL_CONNECTIONSTRING']
@@ -51,10 +47,9 @@ DATABASES = {
     }
 }
 
+#AZURE_MYSQL_CONNECTIONSTRING = dbname=nombreBD host=elHost port=3306 sslmode=require user=usuario password=pass
+
 #almacenmiento azure
-
-#AZURE_STORAGE_BLOB = account_name = nombrecuenta  container_name = nombrecontenedor  account_key = clavecuenta
-
 # Configuración para el diccionario de storages
 # si estamos en producción o desarrollo, y saber de donde traer la configuración
 
