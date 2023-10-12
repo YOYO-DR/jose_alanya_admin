@@ -105,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'es-co'
+LANGUAGE_CODE = 'es-419'
 
 TIME_ZONE = 'UTC'
 
@@ -133,9 +133,10 @@ LOGOUT_REDIRECT_URL = '/'
 
 #media
 #carpeta donde se van a guardar los archivos subidos
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+if not 'WEBSITE_HOSTNAME' in os.environ:
+  MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 #link de como se accede a ellos de forma publica
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
 
 #recordar poner el core.user tambien en el archivos apps.py de la app
 #usuario modificado, le digo que app tiene el modelo del usuario modificado, no le indico que "core" porque ya lo puse en el INSTALLED_APPS, y solo pongo la app y seguido el nombre de la clase del modelo que modifico el usuario
