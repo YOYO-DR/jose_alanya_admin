@@ -61,6 +61,6 @@ AZURE_ACCOUNT_NAME = azure_storage_blob_parametros['account_name']
 AZURE_ACCOUNT_KEY = azure_storage_blob_parametros['account_key']
 STORAGES = {
     "default": {"BACKEND": "storages.backends.azure_storage.AzureStorage"},
-    "staticfiles": {"BACKEND": "custom_storage.custom_azure.PublicAzureStaticStorage"},
-    "media": {"BACKEND": "custom_storage.custom_azure.PublicAzureMediaStorage"},
 }
+DEFAULT_FILE_STORAGE = 'custom_storage.custom_azure.PublicAzureMediaStorage'
+STATICFILES_STORAGE = 'custom_storage.custom_azure.PublicAzureStaticStorage'
