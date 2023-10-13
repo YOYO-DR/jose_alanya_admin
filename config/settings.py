@@ -144,3 +144,6 @@ MEDIA_URL = 'media/'
 #recordar poner el core.user tambien en el archivos apps.py de la app
 #usuario modificado, le digo que app tiene el modelo del usuario modificado, no le indico que "core" porque ya lo puse en el INSTALLED_APPS, y solo pongo la app y seguido el nombre de la clase del modelo que modifico el usuario
 AUTH_USER_MODEL = 'user.User' 
+
+# blob azure
+STATIC_URL_AZURE="https://djangoyoiner.blob.core.windows.net/jose-alanya"

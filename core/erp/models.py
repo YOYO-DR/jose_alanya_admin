@@ -1,8 +1,9 @@
+import os
 from django.db import models
 from datetime import datetime
 from core.erp.choices import gender_choices
 from django.forms import model_to_dict
-from config.settings import MEDIA_URL, STATIC_URL
+from config.settings import MEDIA_URL, STATIC_URL, STATIC_URL_AZURE
 from core.models import BaseModel
 from crum import get_current_user
 
@@ -57,9 +58,9 @@ class Product(BaseModel):
     def get_image(self):
         #si existe la imagen, o bueno, si se subio, le retorno la ruta que debe estar en media url, y le junto el self.image que es el nombre de la imagen
         if self.image:
-            return f'{MEDIA_URL}{self.image}'
+            return f'{MEDIA_URL}{self.image}' if not "WEBSITE_HOSTNAME" in os.environ else f'{STATIC_URL_AZURE}/{MEDIA_URL}{self.image}'
         #de lo contrario, le retorno una imagen como predeterminada que esta en mis static
-        return f'{STATIC_URL}media/img/empty.png'
+        return f'{STATIC_URL}media/img/empty.png' if not "WEBSITE_HOSTNAME" in os.environ else f'{STATIC_URL_AZURE}{STATIC_URL}media/img/empty.png'
 
     def __str__(self):
         return self.name
