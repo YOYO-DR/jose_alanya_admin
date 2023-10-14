@@ -3,9 +3,13 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.forms import model_to_dict
 from config.settings import MEDIA_URL, STATIC_URL, STATIC_URL_AZURE
+from core.crm.models import Empresa, Sede
 
 class User(AbstractUser):
-    image = models.ImageField(upload_to='users/%Y/%m/',null=True, blank=True)
+    email=models.EmailField(unique=True,verbose_name="Email")
+    image = models.ImageField(upload_to='users/%Y/%m/',null=True, blank=True, verbose_name="Imagen")
+    sede=models.ForeignKey(Sede,on_delete=models.PROTECT,null=True,blank=True)
+    empresa=models.ForeignKey(Empresa,on_delete=models.PROTECT,null=True,blank=True)
     
     def get_image(self):
         if self.image:
@@ -14,7 +18,7 @@ class User(AbstractUser):
     
     def toJSON(self):
         item = model_to_dict(self, exclude=['password', 'user_permissions', 'last_login'])
-        item['username']=self.username
+        item['username']=self.username 
         item["image"]=self.get_image()
         if self.last_login:
             item['last_login'] = self.last_login.strftime('%Y-%m-%d')

@@ -5,12 +5,11 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
-from core.erp.forms import ClientForm
-from core.erp.mixins import ValidatePermissionRequiredMixin
-from core.erp.models import Client
+from core.crm.forms import ClientForm
+from core.crm.mixins import ValidatePermissionRequiredMixin
 
 
-class ClientListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView):
+class TrabajadorListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView):
     model = Client
     template_name = 'client/list.html'
     permission_required = 'erp.view_client'
@@ -38,7 +37,7 @@ class ClientListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListVi
         return context
 
 
-class ClientCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, CreateView):
+class TrabajadorCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, CreateView):
     model = Client
     form_class = ClientForm
     template_name = 'client/create.html'
@@ -71,7 +70,7 @@ class ClientCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Crea
         return context
 
 
-class ClientUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, UpdateView):
+class TrabajadorUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, UpdateView):
     model = Client
     form_class = ClientForm
     template_name = 'client/create.html'
@@ -105,7 +104,7 @@ class ClientUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Upda
         return context
 
 
-class ClientDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, DeleteView):
+class TrabajadorDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, DeleteView):
     model = Client
     template_name = 'client/delete.html'
     success_url = reverse_lazy('erp:client_list')

@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from core.erp.mixins import ValidatePermissionRequiredMixin
+from core.crm.mixins import ValidatePermissionRequiredMixin
 from core.user.forms import UserForm
 from core.user.models import User
 

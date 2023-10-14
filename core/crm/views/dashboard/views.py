@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 
-from core.erp.models import Product
+from core.crm.models import Producto
 
 from random import randint
 
@@ -71,6 +71,6 @@ class DashboardView(TemplateView):
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         context['panel']='Panel de administrador'
-        produ=Product.objects.filter(stock__lt=6)
+        produ=Producto.objects.filter(stock__lt=6)
         context['alert_produ']={"vali":True if produ.exists() else False,"produ": produ }
         return context

@@ -14,7 +14,8 @@ class IsSuperuserMixin(object):
         context=super().get_context_data(**kwargs)
         context['date_now']=datetime.now()
         return context
-    
+
+# El ValidatePermissionRequiredMixin validar los permisos para entrar a la vista
 class ValidatePermissionRequiredMixin(object):
     permission_required=''
     url_redirect= None

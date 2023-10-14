@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "storages",
     'widget_tweaks',
     #Mis apps
-    'core.erp',
+    'core.crm',
     'core.login',
     'core.user'
 ]
@@ -130,7 +130,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 #login
-LOGIN_REDIRECT_URL = '/erp/dashboard/'
+LOGIN_REDIRECT_URL = '/crm/dashboard/'
 LOGIN_URL = '/' 
 LOGOUT_REDIRECT_URL = '/'
 

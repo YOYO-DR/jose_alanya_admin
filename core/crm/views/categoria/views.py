@@ -1,21 +1,22 @@
-from core.erp.models import *
+from core.crm.models import *
 from django.views.generic import *
 from django.utils.decorators import *
 from django.http import *
 from django.views.decorators.csrf import *
-from core.erp.forms import *
+from core.crm.forms import *
 from django.urls import *
 from django.contrib.auth.decorators import * 
-from core.erp.mixins import ValidatePermissionRequiredMixin
+from core.crm.mixins import ValidatePermissionRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 # El LoginRequiredMixin es para validar que este Logueado
 # El ValidatePermissionRequiredMixin validar los permisos para entrar a la vista
 
-class CategoryListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,ListView):
+class CategoriaListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,ListView):
     # este atributo es para ponerle el nombre al permiso de esta vista, para que cuando se cree un grupo de permisos
-    permission_required='erp.view_category'
-    model=Category
-    template_name='category/list.html'
+    permission_required='erp.view_categoria'
+    model=Categoria
+    template_name='categoria/list.html'
 
     # esta funcion es la que manipula las peticiones por el metodo "POST"
     def post(self, request, *args, **kwargs):
@@ -26,7 +27,7 @@ class CategoryListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,ListVi
             if action =='searchdata':
                 # aqui retorno todas las categorias y les pongo su metodo toJSON para convertirlo en diccionario y se pueda serializar (convertir a JSON)
                 data=[]
-                for i in Category.objects.all():
+                for i in Categoria.objects.all():
                     data.append(i.toJSON())
             else:
                 # si no se envia el action, retorno el error
@@ -42,17 +43,17 @@ class CategoryListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,ListVi
         context=super().get_context_data(**kwargs)
         context['title']='Listado de categorias'
         # el reverse_lazy es para obtener alguna url por su nombre ("app:name_url"), y retorna la url completa (https://...)
-        context['create_url']=reverse_lazy('erp:category_create')
-        context['list_url']=reverse_lazy('erp:category_list')
+        context['create_url']=reverse_lazy('crm:categoria_create')
+        context['list_url']=reverse_lazy('crm:categoria_list')
         context['entity']='Categorias'
         return context
-    
-class CategoryCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, CreateView):
-    model=Category
-    form_class=CategoryForm
-    template_name='category/create.html'
-    success_url=reverse_lazy('erp:category_list')
-    permission_required = 'erp.add_category'
+
+class CategoriaCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, CreateView):
+    model=Categoria
+    form_class=CategoriaForm
+    template_name='categoria/create.html'
+    success_url=reverse_lazy('crm:categoria_list')
+    permission_required = 'crm.add_categoria'
     url_redirect = success_url
 
     def post(self, request, *args, **kwargs):
@@ -76,12 +77,12 @@ class CategoryCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Cr
         context['action']='add'
         return context 
 
-class CategoryUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, UpdateView):
-    model=Category
-    form_class=CategoryForm
-    template_name='category/create.html'
-    success_url=reverse_lazy('erp:category_list')
-    permission_required = 'erp.change_category'
+class CategoriaUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, UpdateView):
+    model=Categoria
+    form_class=CategoriaForm
+    template_name='categoria/create.html'
+    success_url=reverse_lazy('crm:categoria_list')
+    permission_required = 'crm.change_categoria'
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
@@ -110,12 +111,12 @@ class CategoryUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Up
         context['list_url']=self.success_url
         context['action']='edit'
         return context 
-    
-class CategoryDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, DeleteView):
-    model=Category
-    template_name='category/delete.html'
-    success_url=reverse_lazy('erp:category_list')
-    permission_required = 'erp.delete_category'
+
+class CategoriaDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, DeleteView):
+    model=Categoria
+    template_name='categoria/delete.html'
+    success_url=reverse_lazy('crm:categoria_list')
+    permission_required = 'crm.delete_categoria'
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):

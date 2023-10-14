@@ -40,7 +40,7 @@ function submit_with_ajax(url,title,content, parameters,callback) {
         //la función a realizar
         action: function () {
           $.ajax({
-            //url:'{% url 'erp:category_create' %}',
+            //url:'{% url 'crm:categoria_create' %}',
             //de esta forma obtengo la url actual
             url: url, //se la paso por la función
             type: "POST",
