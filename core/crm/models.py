@@ -83,6 +83,7 @@ class Empresa(BaseModel):
 
 class Sede(BaseModel):
   nombre=models.CharField(max_length=100,unique=True,null=False,blank=False,verbose_name="Nombre")
+  empresa=models.ForeignKey(Empresa,null=False,blank=False, on_delete=models.CASCADE,verbose_name="Empresa")
 
   def __str__(self):
      return self.nombre
