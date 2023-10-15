@@ -12,11 +12,11 @@ urlpatterns = [
     path('categoria/update/<int:pk>/', CategoriaUpdateView.as_view(), name='categoria_update'),
     path('categoria/delete/<int:pk>/', CategoriaDeleteView.as_view(), name='categoria_delete'),
 
-    # # producto
-    # path('producto/list/', ProductListView.as_view(), name='producto_list'),
-    # path('producto/add/', ProductCreateView.as_view(), name='producto_create'),
-    # path('producto/update/<int:pk>/', ProductUpdateView.as_view(), name='producto_update'),
-    # path('producto/delete/<int:pk>/', ProductDeleteView.as_view(), name='producto_delete'),
+    # producto
+    path('producto/list/', ProductoListView.as_view(), name='producto_list'),
+    path('producto/add/', ProductoCreateView.as_view(), name='producto_create'),
+    path('producto/update/<int:pk>/', ProductoUpdateView.as_view(), name='producto_update'),
+    path('producto/delete/<int:pk>/', ProductoDeleteView.as_view(), name='producto_delete'),
 
     # # empresa
     # path('empresa/list/', ProductListView.as_view(), name='empresa_list'),

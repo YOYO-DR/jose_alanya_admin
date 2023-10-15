@@ -14,11 +14,11 @@ $(function () {
         },
         columns: [
             {"data": "id"},
-            {"data": "name"},
-            {"data": "cat.name"},
-            {"data": "image"},
+            {"data": "nombre"},
+            {"data": "categoria.nombre"},
+            {"data": "imagen"},
             {"data": "stock"},
-            {"data": "pvp"},
+            {"data": "precio"},
             {"data": "id"},
         ],
         columnDefs: [
@@ -56,10 +56,10 @@ $(function () {
                 orderable: false,
                 render: function (data, type, row) {
                     var buttons =
-                      '<a href="/erp/product/update/' +
+                      '<a href="/crm/producto/update/' +
                       row.id +
                       '/" class="btn btn-primary btn-s btn-flat"><i class="fas fa-edit"></i></a> ';
-                    buttons += '<a href="/erp/product/delete/' + row.id + '/" type="button" class="btn btn-danger btn-s btn-flat"><i class="fas fa-trash-alt"></i></a>';
+                    buttons += '<a href="/crm/producto/delete/' + row.id + '/" type="button" class="btn btn-danger btn-s btn-flat"><i class="fas fa-trash-alt"></i></a>';
                     return buttons;
                 }
             },

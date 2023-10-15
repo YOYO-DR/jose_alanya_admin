@@ -11,123 +11,123 @@ from core.crm.forms import ProductoForm
 from core.crm.models import Producto
 
 
-# class ProductListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView):
-#     model = Product
-#     template_name = 'product/list.html'
-#     permission_required = 'erp.view_producto'
+class ProductoListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView):
+    model = Producto
+    template_name = 'producto/list.html'
+    permission_required = 'crm.view_producto'
     
-#     def post(self, request, *args, **kwargs):
-#         data={}
-#         try:
-#             action=request.POST['action']
-#             if action =='searchdata':
-#                 data=[]
-#                 for i in Product.objects.all():
-#                     data.append(i.toJSON())
-#             else:
-#                 data['error'] ='Ha ocurrido un error'
-#         except Exception as e:
-#             data={}
-#             data['error']=str (e)
-#         return JsonResponse(data, safe=False)
+    def post(self, request, *args, **kwargs):
+        data={}
+        try:
+            action=request.POST['action']
+            if action =='searchdata':
+                data=[]
+                for i in Producto.objects.all():
+                    data.append(i.toJSON())
+            else:
+                data['error'] ='Ha ocurrido un error'
+        except Exception as e:
+            data={}
+            data['error']=str (e)
+        return JsonResponse(data, safe=False)
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['title'] = 'Listado de Productos'
-#         context['create_url'] = reverse_lazy('erp:product_create')
-#         context['list_url'] = reverse_lazy('erp:product_list')
-#         context['entity'] = 'Productos'
-#         return context
-
-
-# class ProductCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, CreateView):
-#     model = Product
-#     form_class = ProductForm
-#     template_name = 'product/create.html'
-#     success_url = reverse_lazy('erp:product_list')
-#     permission_required = 'erp.add_product'
-#     url_redirect = success_url
-
-#     def post(self, request, *args, **kwargs):
-#         data = {}
-#         try:
-#             action = request.POST['action']
-#             if action == 'add':
-#                 form = self.get_form()
-#                 data = form.save()
-#             else:
-#                 data['error'] = 'No ha ingresado a ninguna opción'
-#         except Exception as e:
-#             data={}
-#             data['error'] = str(e)
-#         return JsonResponse(data)
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['title'] = 'Creación de un Producto'
-#         context['entity'] = 'Productos'
-#         context['list_url'] = self.success_url
-#         context['action'] = 'add'
-#         return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Listado de Productos'
+        context['create_url'] = reverse_lazy('crm:producto_create')
+        context['list_url'] = reverse_lazy('crm:producto_list')
+        context['entity'] = 'Productos'
+        return context
 
 
-# class ProductUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, UpdateView):
-#     model = Product
-#     form_class = ProductForm
-#     template_name = 'product/create.html'
-#     success_url = reverse_lazy('erp:product_list')
-#     permission_required = 'erp.change_product'
-#     url_redirect = success_url
+class ProductoCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, CreateView):
+    model = Producto
+    form_class = ProductoForm
+    template_name = 'producto/create.html'
+    success_url = reverse_lazy('crm:producto_list')
+    permission_required = 'crm.add_producto'
+    url_redirect = success_url
 
-#     def dispatch(self, request, *args, **kwargs):
-#         self.object = self.get_object()
-#         return super().dispatch(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+            if action == 'add':
+                form = self.get_form()
+                data = form.save()
+            else:
+                data['error'] = 'No ha ingresado a ninguna opción'
+        except Exception as e:
+            data={}
+            data['error'] = str(e)
+        return JsonResponse(data)
 
-#     def post(self, request, *args, **kwargs):
-#         data = {}
-#         try:
-#             action = request.POST['action']
-#             if action == 'edit':
-#                 form = self.get_form()
-#                 data = form.save()
-#             else:
-#                 data['error'] = 'No ha ingresado a ninguna opción'
-#         except Exception as e:
-#             data={}
-#             data['error'] = str(e)
-#         return JsonResponse(data)
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['title'] = 'Edición de un Producto'
-#         context['entity'] = 'Productos'
-#         context['list_url'] = self.success_url
-#         context['action'] = 'edit'
-#         return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Creación de un Producto'
+        context['entity'] = 'Productos'
+        context['list_url'] = self.success_url
+        context['action'] = 'add'
+        return context
 
 
-# class ProductDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, DeleteView):
-    # model = Product
-    # template_name = 'product/delete.html'
-    # success_url = reverse_lazy('erp:product_list')
-    # permission_required = 'erp.delete_product'
-    # url_redirect = success_url
+class ProductoUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, UpdateView):
+    model = Producto
+    form_class = ProductoForm
+    template_name = 'producto/create.html'
+    success_url = reverse_lazy('crm:producto_list')
+    permission_required = 'crm.change_producto'
+    url_redirect = success_url
 
-    # def dispatch(self, request, *args, **kwargs):
-    #     self.object = self.get_object()
-    #     return super().dispatch(request, *args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
 
-    # def post(self, request, *args, **kwargs):
-    #     data = {}
-    #     try:
-    #         self.object.delete()
-    #     except Exception as e:
-    #         data['error'] = str(e)
-    #     return JsonResponse(data)
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+            if action == 'edit':
+                form = self.get_form()
+                data = form.save()
+            else:
+                data['error'] = 'No ha ingresado a ninguna opción'
+        except Exception as e:
+            data={}
+            data['error'] = str(e)
+        return JsonResponse(data)
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['title'] = 'Eliminación de un Producto'
-    #     context['entity'] = 'Productos'
-    #     context['list_url'] = self.success_url
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edición de un Producto'
+        context['entity'] = 'Productos'
+        context['list_url'] = self.success_url
+        context['action'] = 'edit'
+        return context
+
+
+class ProductoDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, DeleteView):
+    model = Producto
+    template_name = 'producto/delete.html'
+    success_url = reverse_lazy('crm:producto_list')
+    permission_required = 'crm.delete_producto'
+    url_redirect = success_url
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            self.object.delete()
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Eliminación de un Producto'
+        context['entity'] = 'Productos'
+        context['list_url'] = self.success_url
+        return context

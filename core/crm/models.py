@@ -48,15 +48,15 @@ class Producto(BaseModel):
     def toJSON(self):
         item = model_to_dict(self)
         item['full_name']='{} / {}'.format(self.nombre, self.categoria.nombre)
-        item['cat']={"id":self.categoria.id,"name":self.categoria.nombre}
-        item['image']=self.get_image()
-        item['pvp']=format(self.precio, '.2f')
+        item['categoria']={"id":self.categoria.id,"nombre":self.categoria.nombre}
+        item['imagen']=self.get_image()
+        item['precio']=format(self.precio, '.2f')
         return item
 
     def get_image(self):
         #si existe la imagen, o bueno, si se subio, le retorno la ruta que debe estar en media url, y le junto el self.image que es el nombre de la imagen
         if self.imagen:
-            return f'{MEDIA_URL}{self.imagen}' if not "WEBSITE_HOSTNAME" in os.environ else f'{STATIC_URL_AZURE}/{MEDIA_URL}{self.imagen}'
+            return f'/{MEDIA_URL}{self.imagen}' if not "WEBSITE_HOSTNAME" in os.environ else f'{STATIC_URL_AZURE}/{MEDIA_URL}{self.imagen}'
         #de lo contrario, le retorno una imagen como predeterminada que esta en mis static
         return f'{STATIC_URL}media/img/empty.png' if not "WEBSITE_HOSTNAME" in os.environ else f'{STATIC_URL_AZURE}{STATIC_URL}media/img/empty.png'
 

@@ -13,7 +13,7 @@ class User(AbstractUser):
     
     def get_image(self):
         if self.image:
-            return f'{MEDIA_URL}{self.image}' if not "WEBSITE_HOSTNAME" in os.environ else f'{STATIC_URL_AZURE}/{MEDIA_URL}{self.image}'
+            return f'/{MEDIA_URL}{self.image}' if not "WEBSITE_HOSTNAME" in os.environ else f'{STATIC_URL_AZURE}/{MEDIA_URL}{self.image}'
         return f'{STATIC_URL}media/img/empty.png' if not "WEBSITE_HOSTNAME" in os.environ else f'{STATIC_URL_AZURE}{STATIC_URL}media/img/empty.png'
     
     def toJSON(self):
