@@ -17,12 +17,14 @@ $(function(){
         { data: "username" },
         { data: "date_joined" },
         { data: "image" },
+        { data: "sede" },
+        { data: "empresa" },
         { data: "groups" },
         { data: "id" },
       ],
       columnDefs: [
         {
-          targets: [-3],
+          targets: [-5],
           class: "text-center",
           orderable: false,
           render: function (data, type, row) {
@@ -45,7 +47,6 @@ $(function(){
               return html;
           }
       },
-
         {
           targets: [-1],
           class: "text-center",

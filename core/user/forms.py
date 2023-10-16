@@ -51,7 +51,6 @@ class UserForm(ModelForm):
         form = super()
         try:
             if form.is_valid():
-                print(self.cleaned_data['groups'])
                 pwd=self.cleaned_data['password']
                 u= form.save(commit=False)
                 if u.pk is None:

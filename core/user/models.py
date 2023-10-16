@@ -24,4 +24,6 @@ class User(AbstractUser):
             item['last_login'] = self.last_login.strftime('%Y-%m-%d')
         item['date_joined'] = self.date_joined.strftime('%Y-%m-%d')
         item['groups']=[group.name for group in self.groups.all()]
+        item["sede"]=self.sede.nombre if self.sede else "No aplica"
+        item["empresa"]=self.empresa.nombre if self.empresa else "No aplica"
         return item

@@ -14,7 +14,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 class CategoriaListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,ListView):
     # este atributo es para ponerle el nombre al permiso de esta vista, para que cuando se cree un grupo de permisos
-    permission_required='erp.view_categoria'
+    permission_required='crm.view_categoria'
     model=Categoria
     template_name='categoria/list.html'
 

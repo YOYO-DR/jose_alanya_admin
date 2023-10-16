@@ -13,7 +13,7 @@ from core.crm.models import Trabajador
 class TrabajadorListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView):
     model = Trabajador
     template_name = 'trabajador/list.html'
-    permission_required = 'erp.view_trabajador'
+    permission_required = 'crm.view_trabajador'
 
     def post(self, request, *args, **kwargs):
         data = {}
