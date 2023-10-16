@@ -105,26 +105,6 @@
         });
       })
 
-        /*$.ajax({
-              //url:'{% url 'crm:categoria_create' %}',
-              //de esta forma obtengo la url actual
-              url:window.location.pathname,
-              type: 'POST',
-              data: parameters,
-              dataType: 'json'
-          }).done(function (data) { //Este metodo se ejecuta si la peticion se realiza de manera exitosa
-          if(!data.hasOwnProperty('error')){ //pregunto si el data NO tiene errores
-          //lo regreso a la lista
-          location.href = '{{list_url}}'
-          //le retorno false para que salga del proceso
-          return false;
-          }
-          message_error(data.error);
-            }).fail(function (jqXHR,textStatus,errorThrown){ //Este se ejecuta si la peticion tiene algun error
-          alert(`${textStatus} : ${errorThrown}`)
-            }).always(function () { //este se ejecuta siempre
-            })*/
-    /*})*/
       
 </script>
 {% endblock js %}

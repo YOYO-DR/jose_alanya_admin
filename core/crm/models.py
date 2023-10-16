@@ -89,20 +89,22 @@ class Sede(BaseModel):
      return self.nombre
   
   def toJSON(self):
-    return model_to_dict(self)
+    item =model_to_dict(self)
+    item["empresa"]={"id":self.empresa.id,"nombre":self.empresa.nombre}
+    return item
 
   class Meta:
     verbose_name = 'Sede'
     verbose_name_plural = 'Sedes'
 
 class Trabajador(BaseModel):
-  nombres=models.CharField(max_length=100,null=False,blank=False,verbose_name="Nombres"),
-  apellidos=models.CharField(max_length=100,null=False,blank=False,verbose_name="Apellidos"),
-  edad=models.IntegerField(null=False,blank=False,verbose_name="Edad"),
-  direccion=models.CharField(max_length=200,null=False,blank=False,verbose_name="Dirección"),
-  correo=models.EmailField(verbose_name="Correo"),
-  curriculum_vitae=models.CharField(max_length=200,null=False,blank=False,verbose_name="Curriculum Vitae"),
-  sede=models.ForeignKey(Sede,on_delete=models.PROTECT,null=False,blank=True,verbose_name="Sede")
+  nombres=models.CharField(max_length=100,null=False,blank=False,verbose_name="Nombres")
+  apellidos=models.CharField(max_length=100,null=False,blank=False,verbose_name="Apellidos")
+  edad=models.IntegerField(null=False,blank=False,verbose_name="Edad")
+  direccion=models.CharField(max_length=200,null=False,blank=False,verbose_name="Dirección")
+  correo=models.EmailField(verbose_name="Correo")
+  curriculum_vitae=models.CharField(max_length=200,null=False,blank=False,verbose_name="Curriculum Vitae")
+  sede=models.ForeignKey(Sede,on_delete=models.CASCADE,null=False,blank=True,verbose_name="Sede")
 
   def nombres_completos(self):
      return f'{self.nombres} {self.apellidos}'

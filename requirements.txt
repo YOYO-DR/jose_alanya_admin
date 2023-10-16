@@ -13,7 +13,7 @@ gunicorn==21.2.0
 idna==3.4
 isodate==0.6.1
 mysqlclient==2.1.1
-packaging==23.20111111111111111114
+packaging==23.2
 Pillow==9.4.0
 pycparser==2.21
 python-dotenv==1.0.0

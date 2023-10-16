@@ -1,4 +1,4 @@
-from django.forms import ModelForm,Select,TextInput, Textarea
+from django.forms import ModelForm,Select,TextInput, Textarea,NumberInput,EmailInput
 
 from core.crm.models import Categoria, Producto, Sede, Trabajador,Empresa
 
@@ -79,7 +79,24 @@ class TrabajadorForm(ModelForm):
     model=Trabajador
     fields="__all__"
     widgets={
-      "sede":Select()
+        "nombres":TextInput(attrs={
+            "placeholder":"Ingrese los nombres"
+        }),
+        "apellidos":TextInput(attrs={
+            "placeholder":"Ingrese los apellidos"
+        }),
+        "edad":NumberInput(attrs={
+            "placeholder":"Ingrese la edad"
+        }),
+        "direccion":TextInput(attrs={
+            "placeholder":"Ingrese la dirección"
+        }),
+        "correo":EmailInput(attrs={
+            "placeholder":"Ingrese el correo electrónico"
+        }),
+        "curriculum_vitae":TextInput(attrs={
+            "placeholder":"Ingrese el curriculum vitae"
+        })
     }
     exclude=['user_creation','user_updated']
 
@@ -109,6 +126,19 @@ class EmpresaForm(ModelForm):
         }
         fields="__all__"
         exclude=['user_creation','user_updated']
+    
+    def save(self, commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data
+    
 
 class SedeForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -124,3 +154,15 @@ class SedeForm(ModelForm):
         }
         fields="__all__"
         exclude=['user_creation','user_updated']
+    
+    def save(self, commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data
