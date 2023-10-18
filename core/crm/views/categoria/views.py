@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from core.crm.models import *
 from django.views.generic import *
 from django.utils.decorators import *
@@ -8,6 +9,7 @@ from django.urls import *
 from django.contrib.auth.decorators import * 
 from core.crm.mixins import ValidatePermissionRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 
 # El LoginRequiredMixin es para validar que este Logueado
 # El ValidatePermissionRequiredMixin validar los permisos para entrar a la vista
@@ -27,7 +29,11 @@ class CategoriaListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,ListV
             if action =='searchdata':
                 # aqui retorno todas las categorias y les pongo su metodo toJSON para convertirlo en diccionario y se pueda serializar (convertir a JSON)
                 data=[]
-                for i in Categoria.objects.all():
+                if request.user.groups.filter(Q(name="administrador")).exists():
+                  cate=Categoria.objects.all()
+                else:
+                  cate=Categoria.objects.filter(empresa=request.user.empresa)
+                for i in cate:
                     data.append(i.toJSON())
             else:
                 # si no se envia el action, retorno el error
@@ -86,7 +92,8 @@ class CategoriaUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, U
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
-        self.object=self.get_object()
+        if not request.user.groups.filter(Q(name="administrador")).exists():
+          self.object=get_object_or_404(Categoria,id=self.get_object().id,empresa=request.user.empresa)
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -120,7 +127,7 @@ class CategoriaDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, D
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
-        self.object=self.get_object()
+        self.object=get_object_or_404(Categoria,id=self.get_object().id,empresa=request.user.empresa)
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):

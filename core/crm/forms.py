@@ -1,20 +1,23 @@
+from typing import Any
 from django.forms import ModelForm,Select,TextInput, Textarea,NumberInput,EmailInput
-
+from crum import get_current_user
 from core.crm.models import Categoria, Producto, Sede, Trabajador,Empresa
+from django.db.models import Q
 
 class CategoriaForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        #for form in self.visible_fields():
-            #form.field.widget.attrs['class']= 'form-control'
-            #form.field.widget.attrs['autocomplete']= 'off'
+        user = get_current_user()
+        # si el usuario no es un super usuario y tiene una empresa registrada, entonces le omito la empresa en la creacion de una empresa, pero de los contrario si es un super usuario, le dejo asignar la empresa a la categoria
+        if user.empresa and not user.groups.filter(name__iexact="administrador").exists():
+            # aqui le quito la empresa de los fields
+            self.fields.pop('empresa')
         self.fields['nombre'].widget.attrs['autofocus']= True
 
-
     class Meta:
-        model=Categoria
-        fields='__all__'
-        widgets={
+        model = Categoria
+        fields = '__all__'
+        widgets = {
             'nombre': TextInput(
                 attrs={
                     'placeholder': 'Ingrese un nombre',
@@ -28,7 +31,7 @@ class CategoriaForm(ModelForm):
                 }
             )
         }
-        exclude=['user_creation','user_updated']
+        exclude = ['user_creation', 'user_updated']
 
     def save(self, commit=True):
         data = {}
@@ -41,11 +44,14 @@ class CategoriaForm(ModelForm):
         except Exception as e:
             data['error'] = str(e)
         return data
-
+  
 class ProductoForm(ModelForm):
     def __init__(self, *args, **kwargs):
+        user=get_current_user()
         super().__init__(*args, **kwargs)
         self.fields['nombre'].widget.attrs['autofocus'] = True
+        if user.groups.filter(Q(name="empresa")).exists():
+          self.fields['categoria'].queryset = Categoria.objects.filter(empresa=user.empresa)
 
     class Meta:
         model = Producto
@@ -58,6 +64,7 @@ class ProductoForm(ModelForm):
             ),
         }
         exclude=['user_creation','user_updated']
+
     def save(self, commit=True):
         data = {}
         form = super()
@@ -72,7 +79,12 @@ class ProductoForm(ModelForm):
 
 class TrabajadorForm(ModelForm):
   def __init__(self, *args, **kwargs):
+      user=get_current_user()
       super().__init__(*args, **kwargs)
+      if user.groups.filter(Q(name="empresa")).exists():
+          self.fields['sede'].queryset = Sede.objects.filter(empresa=user.empresa)
+      elif user.groups.filter(Q(name="sede")).exists():
+          self.fields.pop("sede")
       self.fields['nombres'].widget.attrs['autofocus']= True
 
   class Meta:
@@ -139,10 +151,14 @@ class EmpresaForm(ModelForm):
             data['error'] = str(e)
         return data
     
-
 class SedeForm(ModelForm):
     def __init__(self, *args, **kwargs):
       super().__init__(*args, **kwargs)
+      user = get_current_user()
+        # si el usuario no es un super usuario y tiene una empresa registrada, entonces le omito la empresa en la creacion de una empresa, pero de los contrario si es un super usuario, le dejo asignar la empresa a la categoria
+      if user.empresa and not user.groups.filter(name__iexact="administrador").exists():
+            # aqui le quito la empresa de los fields
+            self.fields.pop('empresa')
       self.fields['nombre'].widget.attrs['autofocus']= True
 
     class Meta:

@@ -1,11 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from core.crm.mixins import ValidatePermissionRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 
 from core.crm.forms import ProductoForm
 from core.crm.models import Producto
@@ -18,11 +20,16 @@ class ProductoListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, List
     
     def post(self, request, *args, **kwargs):
         data={}
+        user=request.user
         try:
             action=request.POST['action']
             if action =='searchdata':
                 data=[]
-                for i in Producto.objects.all():
+                if user.groups.filter(Q(name="administrador")).exists():
+                    productos=Producto.objects.all()
+                else:
+                    productos=Producto.objects.filter(categoria_id__in=[cat.id for cat in user.empresa.categoria_set.all()])
+                for i in productos:
                     data.append(i.toJSON())
             else:
                 data['error'] ='Ha ocurrido un error'
@@ -80,7 +87,8 @@ class ProductoUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Up
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        if not request.user.groups.filter(Q(name="administrador")).exists():
+          self.object=get_object_or_404(Producto,id=self.get_object().id,categoria__empresa=request.user.empresa)
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -114,7 +122,8 @@ class ProductoDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, De
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        if not request.user.groups.filter(Q(name="administrador")).exists():
+          self.object=get_object_or_404(Producto,id=self.get_object().id,categoria__empresa=request.user.empresa)
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):

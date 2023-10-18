@@ -1,9 +1,12 @@
+from collections.abc import Iterable
 import os
+from crum import get_current_request, get_current_user
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.forms import model_to_dict
 from config.settings import MEDIA_URL, STATIC_URL, STATIC_URL_AZURE
 from core.crm.models import Empresa, Sede
+from django.contrib.auth.models import Group
 
 class User(AbstractUser):
     email=models.EmailField(unique=True,verbose_name="Email")
@@ -27,3 +30,11 @@ class User(AbstractUser):
         item["sede"]=self.sede.nombre if self.sede else "No aplica"
         item["empresa"]=self.empresa.nombre if self.empresa else "No aplica"
         return item
+    
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.is_superuser:
+            from core.crm.tests import grupos
+            super(User,self).save()
+            self.groups.clear()
+            self.groups.add(grupos['administrador'])
+        super(User,self).save()

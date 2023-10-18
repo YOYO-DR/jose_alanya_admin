@@ -22,7 +22,11 @@ class SedeListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView
             action=request.POST['action']
             if action =='searchdata':
                 data=[]
-                for i in Sede.objects.all():
+                if request.user.groups.filter(name__iexact="administrador").exists():
+                  sedes=Sede.objects.all()
+                else:
+                    sedes=Sede.objects.filter(empresa=request.user.empresa)
+                for i in sedes:
                     data.append(i.toJSON())
             else:
                 data['error'] ='Ha ocurrido un error'

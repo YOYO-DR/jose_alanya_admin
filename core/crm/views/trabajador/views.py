@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -8,6 +9,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from core.crm.forms import TrabajadorForm
 from core.crm.mixins import ValidatePermissionRequiredMixin
 from core.crm.models import Trabajador
+from django.db.models import Q
 
 
 class TrabajadorListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView):
@@ -21,9 +23,17 @@ class TrabajadorListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Li
             action = request.POST['action']
             if action == 'searchdata':
                 data = []
-                for i in Trabajador.objects.all():
+                if request.user.groups.filter(Q(name="administrador")).exists():
+                    trabajadores=Trabajador.objects.all()
+                elif request.user.groups.filter(Q(name="empresa")).exists():
+                    trabajadores=Trabajador.objects.filter(sede__empresa=request.user.empresa)
+                #permiso sede
+                else:
+                    trabajadores=Trabajador.objects.filter(sede=request.user.sede)
+                for i in trabajadores:
                     data.append(i.toJSON())
             else:
+                data={}
                 data['error'] = 'Ha ocurrido un error'
         except Exception as e:
             data['error'] = str(e)
@@ -77,7 +87,14 @@ class TrabajadorUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, 
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        if not request.user.groups.filter(Q(name="administrador")).exists():
+          # empresa
+          if request.user.groups.filter(Q(name="empresa")).exists():
+            self.object=get_object_or_404(Trabajador,id=self.get_object().id,sede__empresa=request.user.empresa)
+            #sede
+          else:
+            self.object=get_object_or_404(Trabajador,id=self.get_object().id,sede=request.user.sede)
+        
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -110,7 +127,14 @@ class TrabajadorDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, 
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        if not request.user.groups.filter(Q(name="administrador")).exists():
+          # empresa
+          if request.user.groups.filter(Q(name="empresa")).exists():
+            self.object=get_object_or_404(Trabajador,id=self.get_object().id,sede__empresa=request.user.empresa)
+            #sede
+          else:
+            self.object=get_object_or_404(Trabajador,id=self.get_object().id,sede=request.user.sede)
+        
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):

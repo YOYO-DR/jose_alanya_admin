@@ -10,7 +10,7 @@ class UserListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,ListView):
     permission_required='user.view_user'
     model=User
     template_name='user/list.html'
-    url_redirect=reverse_lazy("erp:dashboard")
+    url_redirect=reverse_lazy("crm:dashboard")
 
     def post(self, request, *args, **kwargs):
         data={}
@@ -18,7 +18,11 @@ class UserListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,ListView):
             action=request.POST['action']
             if action =='searchdata':
                 data=[]
-                for i in User.objects.all():
+                if request.user.groups.filter(name='administrador').exists():
+                  list_user=User.objects.all()
+                else:
+                    list_user=User.objects.filter(sede__empresa=request.user.empresa)
+                for i in list_user:
                     data.append(i.toJSON())
             else:
                 data['error'] ='No ha ingresado a ninguna opcion'
