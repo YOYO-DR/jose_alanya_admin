@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -84,7 +85,8 @@ class SedeUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        if not request.user.groups.filter(name="administrador").exists():
+          self.object=get_object_or_404(Sede,id=self.get_object().id,empresa=request.user.empresa)
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -118,7 +120,8 @@ class SedeDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Delete
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        if not request.user.groups.filter(name="administrador").exists():
+          self.object=get_object_or_404(Sede,id=self.get_object().id,empresa=request.user.empresa)
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):

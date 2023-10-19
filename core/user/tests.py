@@ -3,7 +3,7 @@ from core.crm.models import Empresa,Categoria,Producto,Sede,Trabajador
 from core.crm.tests import grupos
 
 # superususario de prueba
-superuser=User.objects.get(username="yoiner")
+superuser=User.objects.filter(is_superuser=True,is_active=True).first()
 
 # crear 2 empresas
 empresa_1=Empresa(nombre="Empresa_1")

@@ -1,7 +1,7 @@
 from typing import Any
-from django.forms import ModelForm,Select,TextInput, Textarea,NumberInput,EmailInput
+from django.forms import ModelForm,TextInput, Textarea,NumberInput,EmailInput,CheckboxInput
 from crum import get_current_user
-from core.crm.models import Categoria, Producto, Sede, Trabajador,Empresa
+from core.crm.models import Categoria, Producto, Sede, Servicio, Trabajador,Empresa
 from django.db.models import Q
 
 class CategoriaForm(ModelForm):
@@ -171,6 +171,45 @@ class SedeForm(ModelForm):
         fields="__all__"
         exclude=['user_creation','user_updated']
     
+    def save(self, commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data
+
+class ServicioForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        user=get_current_user()
+        super().__init__(*args, **kwargs)
+        self.fields['nombre'].widget.attrs['autofocus'] = True
+        if user.groups.filter(Q(name="empresa")).exists():
+          self.fields.pop("empresa")
+          self.fields['categoria'].queryset = Categoria.objects.filter(empresa=user.empresa)
+          self.fields['sede'].queryset = Sede.objects.filter(empresa=user.empresa)
+
+    class Meta:
+        model = Servicio
+        fields = '__all__'
+        widgets = {
+            'nombre': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese un nombre',
+                }
+            ),
+            'descripcion': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese una descripción',
+                }
+            )
+        }
+        exclude=['user_creation','user_updated']
+
     def save(self, commit=True):
         data = {}
         form = super()

@@ -14,11 +14,11 @@ from django.db.models import Q
 # El LoginRequiredMixin es para validar que este Logueado
 # El ValidatePermissionRequiredMixin validar los permisos para entrar a la vista
 
-class CategoriaListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,ListView):
+class ServicioListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,ListView):
     # este atributo es para ponerle el nombre al permiso de esta vista, para que cuando se cree un grupo de permisos
-    permission_required='crm.view_categoria'
-    model=Categoria
-    template_name='categoria/list.html'
+    permission_required='crm.view_servicio'
+    model=Servicio
+    template_name='servicio/list.html'
 
     # esta funcion es la que manipula las peticiones por el metodo "POST"
     def post(self, request, *args, **kwargs):
@@ -27,12 +27,12 @@ class CategoriaListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,ListV
             # obtengo la accion de la peticion
             action=request.POST['action']
             if action =='searchdata':
-                # aqui retorno todas las categorias y les pongo su metodo toJSON para convertirlo en diccionario y se pueda serializar (convertir a JSON)
+                # aqui retorno todas los servicios y les pongo su metodo toJSON para convertirlo en diccionario y se pueda serializar (convertir a JSON)
                 data=[]
                 if request.user.groups.filter(Q(name="administrador")).exists():
-                  cate=Categoria.objects.all()
+                  cate=Servicio.objects.all()
                 else:
-                  cate=Categoria.objects.filter(empresa=request.user.empresa)
+                  cate=Servicio.objects.filter(empresa=request.user.empresa)
                 for i in cate:
                     data.append(i.toJSON())
             else:
@@ -47,19 +47,19 @@ class CategoriaListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,ListV
     # esta funcion es para enviar valores al template
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        context['title']='Listado de categorias'
+        context['title']='Listado de servicios'
         # el reverse_lazy es para obtener alguna url por su nombre ("app:name_url"), y retorna la url completa (https://...)
-        context['create_url']=reverse_lazy('crm:categoria_create')
-        context['list_url']=reverse_lazy('crm:categoria_list')
-        context['entity']='Categorias'
+        context['create_url']=reverse_lazy('crm:servicio_create')
+        context['list_url']=reverse_lazy('crm:servicio_list')
+        context['entity']='Servicios'
         return context
 
-class CategoriaCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, CreateView):
-    model=Categoria
-    form_class=CategoriaForm
-    template_name='categoria/create.html'
-    success_url=reverse_lazy('crm:categoria_list')
-    permission_required = 'crm.add_categoria'
+class ServicioCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, CreateView):
+    model=Servicio
+    form_class=ServicioForm
+    template_name='servicio/create.html'
+    success_url=reverse_lazy('crm:servicio_list')
+    permission_required = 'crm.add_servicio'
     url_redirect = success_url
 
     def post(self, request, *args, **kwargs):
@@ -77,23 +77,23 @@ class CategoriaCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, C
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        context['title']='Creacion de categorias'
-        context['entity']='Categorias'
+        context['title']='Creacion de servicios'
+        context['entity']='Servicios'
         context['list_url']=self.success_url
         context['action']='add'
         return context 
 
-class CategoriaUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, UpdateView):
-    model=Categoria
-    form_class=CategoriaForm
-    template_name='categoria/create.html'
-    success_url=reverse_lazy('crm:categoria_list')
-    permission_required = 'crm.change_categoria'
+class ServicioUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, UpdateView):
+    model=Servicio
+    form_class=ServicioForm
+    template_name='servicio/create.html'
+    success_url=reverse_lazy('crm:servicio_list')
+    permission_required = 'crm.change_servicio'
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.groups.filter(Q(name="administrador")).exists():
-          self.object=get_object_or_404(Categoria,id=self.get_object().id,empresa=request.user.empresa)
+          self.object=get_object_or_404(Servicio,id=self.get_object().id,empresa=request.user.empresa)
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -113,22 +113,22 @@ class CategoriaUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, U
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        context['title']='Edicion de categorias'
-        context['entity']='Categorias'
+        context['title']='Edicion de un servicio'
+        context['entity']='Servicios'
         context['list_url']=self.success_url
         context['action']='edit'
         return context 
 
-class CategoriaDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, DeleteView):
-    model=Categoria
-    template_name='categoria/delete.html'
-    success_url=reverse_lazy('crm:categoria_list')
-    permission_required = 'crm.delete_categoria'
+class ServicioDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, DeleteView):
+    model=Servicio
+    template_name='servicio/delete.html'
+    success_url=reverse_lazy('crm:servicio_list')
+    permission_required = 'crm.delete_servicio'
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.groups.filter(Q(name="administrador")).exists():
-          self.object=get_object_or_404(Categoria,id=self.get_object().id,empresa=request.user.empresa)
+          self.object=get_object_or_404(Servicio,id=self.get_object().id,empresa=request.user.empresa)
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -141,7 +141,7 @@ class CategoriaDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, D
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Eliminacion de una Categoria'
-        context['entity'] = 'Categorias'
+        context['title'] = 'Eliminacion de un Servicio'
+        context['entity'] = 'Servicios'
         context['list_url'] = self.success_url
         return context

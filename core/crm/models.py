@@ -200,3 +200,49 @@ class Trabajador(BaseModel):
       if user.groups.filter(name="sede").exists():
          self.sede=user.sede
     super(Trabajador, self).save()
+
+class Servicio(BaseModel):
+  nombre=models.CharField(max_length=100,null=False,blank=False,verbose_name="Nombre")
+  descripcion=models.CharField(max_length=500, null=True,blank=True,verbose_name='Descripción')
+  precio=models.DecimalField(default=0.00, max_digits=9, decimal_places=2,verbose_name='Precio de venta')
+  categoria=models.ForeignKey(Categoria, on_delete=models.CASCADE,verbose_name='Categoria')
+  es_activo=models.BooleanField(default=True,verbose_name="Esta ativo")
+  empresa=models.ForeignKey(Empresa,on_delete=models.CASCADE,null=True,blank=True,verbose_name="Empresa")
+  sede=models.ForeignKey(Sede,on_delete=models.CASCADE,null=True,blank=True,verbose_name="Sede")
+
+  def toJSON(self):
+        item = model_to_dict(self)
+        item['categoria']=self.categoria.toJSON()
+        item['empresa']=self.empresa.toJSON()
+        item['sede']=self.sede.toJSON()
+        return item
+
+  def __str__(self):
+        return self.nombre
+
+  class Meta:
+        verbose_name = 'Servicio'
+        verbose_name_plural = 'Servicios'
+        ordering = ['id']
+    
+  def save(self, force_insert=False, force_update=False, using=None, update_fields=None,user_test=None):
+        # hasta si necesito algo del request, puedo obtenerlo aqui con crum, y su funcion get_current_request()
+        # por si voy a ingresar datos con codigo en vez de la parte del front
+        if user_test:
+          user=user_test
+        else:
+          user = get_current_user()
+        if user.empresa:
+          self.empresa=user.empresa
+        #si el usuario no esta vacio
+        if user is not None:
+          #si no existe un pk o id, significa que se esta creando el registro, de lo contrario, se esta actualizando el registro
+          if not self.pk:
+              self.user_creation=user
+              # verifico que la categoria no exista en la misma lista de la empresa
+              if user.empresa:
+                if Servicio.objects.filter(empresa=user.empresa, nombre=self.nombre).exists():
+                   raise ValueError(f"Ya existe un servicio llamado '{self.nombre}'")
+          else:
+              self.user_updated=user
+        super(Servicio, self).save()
