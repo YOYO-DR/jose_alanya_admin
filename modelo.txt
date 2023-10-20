@@ -32,3 +32,16 @@ Si el usuario tiene una sede relacionada, puede ver solo los trabajadores de esa
 Lo permisos son de ver el crud de trabajadores solo de esa sede, no entrara en el crud de sedes ni empresa, ni categoria, ni productos.
 
 Si es el super usuario puede ver todos los cruds, y es el que crea una empresa y le asigna un usuario para que administre las sedes de ella.
+
+
+
+
+
+
+
+--- notas:
+-- crear bd y .env
+py manage.py migrate
+py manage.py createsuperuser
+py manage.py test core.crm
+py manage.py loadddata dumps/datos_pre.json
