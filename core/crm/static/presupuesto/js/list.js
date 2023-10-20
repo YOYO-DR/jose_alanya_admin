@@ -1,5 +1,5 @@
 $(function(){
-    $("#data").DataTable({
+    let tabla=$("#data").DataTable({
       responsive: true,
       autoWidth: false,
       destroy: true,
@@ -12,7 +12,7 @@ $(function(){
       },
       columns: [
         { data: "id" },
-        { data: "servicio.nombre" },
+        { data: "id" },
         { data: "fecha_servicio" },
         { data: "fecha_caducidad_servicio" },
         { data: "monto_descuento_servicio" },
@@ -30,6 +30,26 @@ $(function(){
       ],
       columnDefs: [
         {
+          targets: [1],
+          class: "text-center",
+          orderable: false,
+          render: function (data, type, row) {
+            return `<button class="servi-modal btn btn-outline-primary">Servicios</button>`;
+          },
+        },
+        {
+          targets: [-7],
+          class: "text-center",
+          orderable: false,
+          render: function (data, type, row) {
+            if (data) {
+              return "Activo";
+            } else {
+              return "Inactivo";
+            }
+          },
+        },
+        {
           targets: [-1],
           class: "text-center",
           orderable: false,
@@ -46,6 +66,10 @@ $(function(){
           },
         },
       ],
-      initComplete: function (settings, json) {},
+      initComplete: function (settings, json) {
+        $("#data").on("click", ".servi-modal", function (e) {
+          console.log("data")
+        });
+      },
     });
 })

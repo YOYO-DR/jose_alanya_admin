@@ -1,5 +1,5 @@
 from typing import Any
-from django.forms import ModelForm,TextInput, Textarea,NumberInput,EmailInput,CheckboxInput
+from django.forms import ModelForm,TextInput, Textarea,NumberInput,EmailInput
 from crum import get_current_user
 from core.crm.models import Categoria, Presupuesto, Producto, Sede, Servicio, Trabajador,Empresa
 from django.db.models import Q
@@ -237,7 +237,7 @@ class PresupuestoForm(ModelForm):
     class Meta:
         model = Presupuesto
         fields = '__all__'
-        exclude = ['user_creation', 'user_updated']
+        exclude = ['user_creation', 'user_updated',"sub_total_servicio","total_servicio"]
 
     def save(self, commit=True):
         data = {}

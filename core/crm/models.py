@@ -4,6 +4,7 @@ from django.forms import model_to_dict
 from core.models import BaseModel
 from crum import get_current_user
 from config.settings import MEDIA_URL, STATIC_URL, STATIC_URL_AZURE
+from datetime import date
 
 class Empresa(BaseModel):
   nombre=models.CharField(max_length=100,unique=True,null=False,blank=False,verbose_name="Nombre")
@@ -249,11 +250,11 @@ class Servicio(BaseModel):
         super(Servicio, self).save()
 
 class Presupuesto(BaseModel):
-  servicio=models.ForeignKey(Servicio,on_delete=models.CASCADE,null=True,blank=True,verbose_name="Servicio")
-  fecha_servicio=models.DateField(verbose_name="Fecha servicio",null=False,blank=False)
-  fecha_caducidad_servicio=models.DateField(verbose_name="Fecha de caducidad del servicio",null=False,blank=False)
+  servicio=models.ManyToManyField(Servicio,verbose_name="Servicios")
+  fecha_servicio=models.DateField(verbose_name="Fecha servicio",null=False,blank=False,default=date.today)
+  fecha_caducidad_servicio=models.DateField(verbose_name="Fecha de caducidad del servicio",null=False,blank=False,default=date.today)
   monto_descuento_servicio=models.DecimalField(verbose_name="Monto de descuento del servicio",null=False,blank=False,max_digits=10,decimal_places=1)
-  con_sin_igv_servicio=models.BooleanField(default=False,verbose_name="Con igv",null=False,blank=False)
+  con_sin_igv_servicio=models.IntegerField(default=18,verbose_name="igv %",null=False,blank=False)
   sub_total_servicio=models.DecimalField(verbose_name="Subtotal del servicio",null=False,blank=False,max_digits=10,decimal_places=1)
   total_impuesto_servicio=models.DecimalField(verbose_name="Total impuesto del servicio",null=False,blank=False,max_digits=10,decimal_places=1)
   total_servicio=models.DecimalField(verbose_name="Total servicio",null=False,blank=False,max_digits=10,decimal_places=1)
@@ -281,6 +282,14 @@ class Presupuesto(BaseModel):
               self.user_creation=user
           else:
               self.user_updated=user
+        self.sub_total_servicio,self.total_servicio=0,0
+        super(Presupuesto,self).save()
+        if self.servicio.all().count()>0:
+          self.sub_total_servicio=0
+          for i in self.servicio.all():
+            self.sub_total_servicio+=float(i.precio)
+          self.total_servicio=self.sub_total_servicio+(self.sub_total_servicio*(self.con_sin_igv_servicio/100))
+
         super(Presupuesto, self).save()
 
         
@@ -288,13 +297,13 @@ class Presupuesto(BaseModel):
         return f'Presupuesto {str(self.id)}'
     
   def toJSON(self):
-      item = model_to_dict(self, exclude=['user_creation','user_updated'])
-      item["servicio"]={"id":self.servicio.id,"nombre":self.servicio.nombre}
+      item = model_to_dict(self, exclude=['user_creation','user_updated',"servicio"])
       item["monto_descuento_servicio"]=float(self.monto_descuento_servicio)
       item["sub_total_servicio"]=float(self.sub_total_servicio)
       item["total_impuesto_servicio"]=float(self.total_impuesto_servicio)
       item["monto_descuento_oficial"]=float(self.monto_descuento_oficial)
       item['sede']={"id":self.sede.id,"nombre":self.sede.nombre}
+      item['total_servicio']=float(self.total_servicio)
       item['empresa']=self.empresa.toJSON()
       return item
 
