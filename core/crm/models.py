@@ -279,19 +279,11 @@ class Presupuesto(BaseModel):
         if user is not None:
           #si no existe un pk o id, significa que se esta creando el registro, de lo contrario, se esta actualizando el registro
           if not self.pk:
+              self.sub_total_servicio,self.total_servicio=0,0
               self.user_creation=user
           else:
               self.user_updated=user
-        self.sub_total_servicio,self.total_servicio=0,0
         super(Presupuesto,self).save()
-        if self.servicio.all().count()>0:
-          self.sub_total_servicio=0
-          for i in self.servicio.all():
-            self.sub_total_servicio+=float(i.precio)
-          self.total_servicio=self.sub_total_servicio+(self.sub_total_servicio*(self.con_sin_igv_servicio/100))
-
-        super(Presupuesto, self).save()
-
         
   def __str__(self):
         return f'Presupuesto {str(self.id)}'

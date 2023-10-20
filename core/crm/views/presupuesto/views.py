@@ -92,8 +92,12 @@ class PresupuestoUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin,
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.groups.filter(Q(name="administrador")).exists():
-          self.object=get_object_or_404(Presupuesto,id=self.get_object().id,empresa=request.user.empresa)
+        if not request.user.groups.filter(Q(name="administrador")).exists() and not request.user.is_superuser:
+              self.object=get_object_or_404(Presupuesto,id=self.get_object().id,empresa=request.user.empresa)
+        else:
+            self.object=get_object_or_404(Presupuesto,id=self.get_object().id)
+            
+            
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -103,6 +107,14 @@ class PresupuestoUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin,
             if action == 'edit':
                 form=self.get_form()
                 data=form.save()
+                presu:Presupuesto=form.instance
+                presu.servicio.clear()
+                for servi in form.cleaned_data['servicio']:
+                    presu.servicio.add(servi)
+                    presu.sub_total_servicio=float(presu.sub_total_servicio)+float(servi.precio)
+                presu.total_servicio=float(presu.sub_total_servicio)+(float(presu.sub_total_servicio)*(float(presu.con_sin_igv_servicio)/100))
+                presu.save()
+                
             else:
                 data['error']='No ha ingresado a ninguna opcion'
         except Exception as e:
@@ -127,8 +139,11 @@ class PresupuestoDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin,
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.groups.filter(Q(name="administrador")).exists():
-          self.object=get_object_or_404(Presupuesto,id=self.get_object().id,empresa=request.user.empresa)
+        if not request.user.groups.filter(Q(name="administrador")).exists() and not request.user.is_superuser:
+              self.object=get_object_or_404(Presupuesto,id=self.get_object().id,empresa=request.user.empresa)
+        else:
+            self.object=get_object_or_404(Presupuesto,id=self.get_object().id)
+
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
