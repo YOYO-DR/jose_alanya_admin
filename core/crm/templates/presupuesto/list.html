@@ -29,4 +29,28 @@
 {% endblock %}
 
 {% block js %}
+{% comment %} Modal {% endcomment %}
+<div
+  class="modal fade"
+  id="modal-img"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">
+          <b class="b-modal-title"
+            ><i class="far fa-image"></i> Imagen usuario</b
+          >
+        </h5>
+          
+      </div>
+      <div class="modal-body d-flex flex-column align-items-center my-2">
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

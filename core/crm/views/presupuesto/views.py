@@ -35,6 +35,11 @@ class PresupuestoListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,Lis
                   cate=Presupuesto.objects.filter(empresa=request.user.empresa)
                 for i in cate:
                     data.append(i.toJSON())
+            elif action=="searchservi":
+              data=[]
+              presu=Presupuesto.objects.get(id=request.POST.get('id'))
+              for servi in presu.servicio.all():
+                data.append(servi.toJSON())
             else:
                 # si no se envia el action, retorno el error
                 data['error'] ='No ha ingresado a ninguna opcion'

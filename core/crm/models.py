@@ -212,7 +212,7 @@ class Servicio(BaseModel):
   sede=models.ForeignKey(Sede,on_delete=models.CASCADE,null=True,blank=True,verbose_name="Sede")
 
   def toJSON(self):
-        item = model_to_dict(self)
+        item = model_to_dict(self,exclude=['user_creation',"user_updated"])
         item['precio']=float(self.precio)
         item['categoria']=self.categoria.toJSON()
         item['empresa']=self.empresa.toJSON()
