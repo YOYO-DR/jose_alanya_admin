@@ -249,17 +249,20 @@ class Servicio(BaseModel):
               self.user_updated=user
         super(Servicio, self).save()
 
-
 class Presupuesto(BaseModel):
+  servicio=models.ManyToManyField(Servicio,verbose_name="Servicios")
   fecha_servicio=models.DateField(verbose_name="Fecha servicio",null=False,blank=False,default=date.today)
   fecha_caducidad_servicio=models.DateField(verbose_name="Fecha de caducidad del servicio",null=False,blank=False,default=date.today)
   monto_descuento_servicio=models.DecimalField(verbose_name="Monto de descuento del servicio",null=False,blank=False,max_digits=10,decimal_places=1)
   con_sin_igv_servicio=models.IntegerField(default=18,verbose_name="igv %",null=False,blank=False)
   sub_total_servicio=models.DecimalField(verbose_name="Subtotal del servicio",null=False,blank=False,max_digits=10,decimal_places=1)
+  total_impuesto_servicio=models.DecimalField(verbose_name="Total impuesto del servicio",null=False,blank=False,max_digits=10,decimal_places=1)
   total_servicio=models.DecimalField(verbose_name="Total servicio",null=False,blank=False,max_digits=10,decimal_places=1)
+  estado_servicio=models.BooleanField(verbose_name="Estado del servicio",default=True)
   nota_admin_servicio=models.TextField(verbose_name="Nota administrador del servicio")
   nota_cliente_servicio=models.TextField(verbose_name="Nota cliente del servicio")
   terminos_condiciones_servicio=models.TextField(verbose_name="Terminos y condiciones del servicio")
+  monto_descuento_oficial=models.DecimalField(verbose_name="Monto de descuento oficial",null=False,blank=False,max_digits=10,decimal_places=1)
   sede=models.ForeignKey(Sede,on_delete=models.CASCADE,verbose_name="Sede",null=False,blank=False)
   empresa=models.ForeignKey(Empresa,on_delete=models.CASCADE,verbose_name="Empresa",null=False,blank=False)
 
@@ -308,36 +311,3 @@ class Presupuesto(BaseModel):
         verbose_name = 'Presupuesto'
         verbose_name_plural = 'Presupuestos'
         ordering = ['id']
-
-class DetallePresupuesto(BaseModel):
-  presupuesto=models.ForeignKey(Presupuesto, on_delete=models.CASCADE,null=False, blank=False)
-  servicio=models.ForeignKey(Servicio, on_delete=models.CASCADE)
-  precio=models.DecimalField(default=0.00, max_digits=9,decimal_places=2)
-  cantidad=models.IntegerField(default=0)
-  subtotal=models.DecimalField(default=0.00, max_digits=9,decimal_places=2)
-
-  def __str__(self):
-     return self.servicio.nombre
-  
-  def toJSON(self):
-    item=model_to_dict(self, exclude=['presupuesto'])
-    item['servicio']=self.servicio.toJSON()
-    item['precio']=format(self.precio, '2f')
-    item['subtotal']=format(self.subtotal, '2f')
-    return item
-
-  def save(self, force_insert=False, force_update=False, using=None, update_fields=None,user_test=None):
-        # hasta si necesito algo del request, puedo obtenerlo aqui con crum, y su funcion get_current_request()
-        # por si voy a ingresar datos con codigo en vez de la parte del front
-        if user_test:
-          user=user_test
-        else:
-          user = get_current_user()
-        #si el usuario no esta vacio
-        if user is not None:
-          #si no existe un pk o id, significa que se esta creando el registro, de lo contrario, se esta actualizando el registro
-          if not self.pk:
-              self.user_creation=user
-          else:
-              self.user_updated=user
-        super(DetallePresupuesto, self).save()

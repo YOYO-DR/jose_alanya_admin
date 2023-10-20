@@ -1,4 +1,3 @@
-import json
 from django.shortcuts import get_object_or_404
 from core.crm.models import *
 from django.views.generic import *
@@ -11,7 +10,6 @@ from django.contrib.auth.decorators import *
 from core.crm.mixins import ValidatePermissionRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.db import transaction
 
 # El LoginRequiredMixin es para validar que este Logueado
 # El ValidatePermissionRequiredMixin validar los permisos para entrar a la vista
@@ -36,10 +34,6 @@ class PresupuestoListView(LoginRequiredMixin,ValidatePermissionRequiredMixin,Lis
                 else:
                   cate=Presupuesto.objects.filter(empresa=request.user.empresa)
                 for i in cate:
-                    data.append(i.toJSON())
-            elif action=="search_detalle_servi":
-                data=[]
-                for i in DetallePresupuesto.objects.filter(presupuesto_id=request.POST.get("id")):
                     data.append(i.toJSON())
             else:
                 # si no se envia el action, retorno el error
@@ -72,67 +66,14 @@ class PresupuestoCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin,
         data={}
         try:
             action=request.POST['action']
-            if action=="search_servi":
-                data=[]
-                ids_exclude=json.loads(request.POST['ids'])
-                servicios=Servicio.objects.filter(nombre__icontains=request.POST['term'])
-                for i in servicios.exclude(id__in=ids_exclude)[0:10]:
-                    item=i.toJSON()
-                    #item['value']=i.Nombre
-                    item['text']=i.nombre
-                    data.append(item)
-            elif action == 'add':
-                with transaction.atomic():
-                    presupuestos=json.loads(request.POST['ventas'])
-
-                    presupuesto=Presupuesto()
-                    presupuesto.fecha_servicio=presupuestos['fecha_servicio']
-                    presupuesto.fecha_caducidad_servicio=presupuestos['fecha_caducidad_servicio']
-                    presupuesto.monto_descuento_servicio=float(presupuestos['monto_descuento_servicio'])
-
-                    presupuesto.con_sin_igv_servicio=float(presupuestos['con_sin_igv_servicio'])
-                    presupuesto.sub_total_servicio=float(presupuestos['sub_total_servicio'])
-                    presupuesto.total_impuesto_servicio=float(presupuestos['total_impuesto_servicio'])
-                    presupuesto.total_servicio=float(presupuestos['total_servicio'])
-                    presupuesto.estado_servicio=presupuestos['estado_servicio']
-                    presupuesto.nota_admin_servicio=presupuestos['nota_admin_servicio']
-                    presupuesto.nota_cliente_servicio=presupuestos['nota_cliente_servicio']
-                    presupuesto.terminos_condiciones_servicio=presupuestos['terminos_condiciones_servicio']
-                    presupuesto.monto_descuento_oficial=float(presupuestos['monto_descuento_oficial'])
-                    presupuesto.monto_descuento_oficial=float(presupuestos['monto_descuento_oficial'])
-                    presupuesto.sede_id=presupuestos['sede']
-                    presupuesto.empresa_id=presupuestos['empresa']
-                    presupuesto.save()
-
-                    for i in presupuestos['servicios']:
-                        det=DetallePresupuesto()
-                        det.presupuesto_id=presupuesto.id
-                        det.servicio_id=i['id']
-                        det.cantidad=int(i['cantidad'])
-                        det.precio=float(i['precio'])
-                        det.subtotal=float(i['subtotal'])
-                        det.save()
-
+            if action == 'add':
+                form=self.get_form()
+                data=form.save()
             else:
                 data['error']='No ha ingresado a ninguna opcion'
         except Exception as e:
             data['error']=str (e)
         return JsonResponse(data)
-    
-    def get_detalles_producto(self):
-        data = []
-        try:
-            for i in DetallePresupuesto.objects.filter(presupuesto_id=self.get_object().id):
-                item = i.servicio.toJSON()
-                item['cantidad'] = i.cantidad
-                # pasarlos a flotantes porque los Decimal no se puede serializar
-                item['precio']=float(item['precio'])
-                item['subtotal']=float(i.subtotal)
-                data.append(item)
-        except:
-            pass
-        return data
-
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
@@ -140,8 +81,6 @@ class PresupuestoCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin,
         context['entity']='Presupuestos'
         context['list_url']=self.success_url
         context['action']='add'
-        context['det']=json.dumps(self.get_detalles_servicio())
-
         return context 
 
 class PresupuestoUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, UpdateView):
@@ -161,53 +100,16 @@ class PresupuestoUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin,
         data={}
         try:
             action=request.POST['action']
-            if action=="search_servi":
-                data=[]
-                ids_exclude=json.loads(request.POST['ids'])
-                servicios=Servicio.objects.filter(nombre__icontains=request.POST['term'])
-                for i in servicios.exclude(id__in=ids_exclude)[0:10]:
-                    item=i.toJSON()
-                    #item['value']=i.Nombre
-                    item['text']=i.nombre
-                    data.append(item)
-            elif action == 'add':
-                with transaction.atomic():
-                    presupuestos=json.loads(request.POST['ventas'])
-
-                    presupuesto=Presupuesto()
-                    presupuesto.fecha_servicio=presupuestos['fecha_servicio']
-                    presupuesto.fecha_caducidad_servicio=presupuestos['fecha_caducidad_servicio']
-                    presupuesto.monto_descuento_servicio=float(presupuestos['monto_descuento_servicio'])
-
-                    presupuesto.con_sin_igv_servicio=float(presupuestos['con_sin_igv_servicio'])
-                    presupuesto.sub_total_servicio=float(presupuestos['sub_total_servicio'])
-                    presupuesto.total_impuesto_servicio=float(presupuestos['total_impuesto_servicio'])
-                    presupuesto.total_servicio=float(presupuestos['total_servicio'])
-                    presupuesto.estado_servicio=presupuestos['estado_servicio']
-                    presupuesto.nota_admin_servicio=presupuestos['nota_admin_servicio']
-                    presupuesto.nota_cliente_servicio=presupuestos['nota_cliente_servicio']
-                    presupuesto.terminos_condiciones_servicio=presupuestos['terminos_condiciones_servicio']
-                    presupuesto.monto_descuento_oficial=float(presupuestos['monto_descuento_oficial'])
-                    presupuesto.monto_descuento_oficial=float(presupuestos['monto_descuento_oficial'])
-                    presupuesto.sede_id=presupuestos['sede']
-                    presupuesto.empresa_id=presupuestos['empresa']
-                    presupuesto.save()
-
-                    for i in presupuestos['servicios']:
-                        det=DetallePresupuesto()
-                        det.presupuesto_id=presupuesto.id
-                        det.servicio_id=i['id']
-                        det.cantidad=int(i['cantidad'])
-                        det.precio=float(i['precio'])
-                        det.subtotal=float(i['subtotal'])
-                        det.save()
-
+            if action == 'edit':
+                form=self.get_form()
+                data=form.save()
             else:
                 data['error']='No ha ingresado a ninguna opcion'
         except Exception as e:
+            data={}
             data['error']=str (e)
-        return JsonResponse(data)
 
+        return JsonResponse(data)
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
