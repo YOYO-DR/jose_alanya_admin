@@ -1,16 +1,7 @@
-from django.db.models.functions import Cast
 from datetime import datetime, date
-import calendar
-
-from django.db.models import Sum, Count, CharField
-from django.db.models.functions import Coalesce
-from django.db.models import FloatField
-from django.http import JsonResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, TemplateView
-from django.db.models import Count, Value
-from datetime import datetime
+from django.db.models import Sum, Count
+from django.views.generic import ListView
+from django.db.models import Count
 
 from random import randint
 
