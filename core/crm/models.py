@@ -212,6 +212,7 @@ class Servicio(BaseModel):
 
   def toJSON(self):
         item = model_to_dict(self)
+        item['precio']=float(self.precio)
         item['categoria']=self.categoria.toJSON()
         item['empresa']=self.empresa.toJSON()
         item['sede']=self.sede.toJSON()
