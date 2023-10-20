@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     #Mis apps
     'core.crm',
     'core.login',
-    'core.user'
+    'core.user',
+    'core.predictions',
 ]
 
 MIDDLEWARE = [

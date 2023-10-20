@@ -25,6 +25,7 @@ urlpatterns = [
     path('',include('core.login.urls')),
     path('crm/',include('core.crm.urls')),
     path('user/',include('core.user.urls')),
+    path('prediction/',include('core.predictions.urls')),
 ]
 
 #para la url de los media en desarrollo
