@@ -1,0 +1,97 @@
+{% extends 'vtc/body.html' %}
+{% load static %}
+
+{% block head %}
+    <script src="{% static 'predictions/js/chat.min.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+
+
+    <div class="container">
+        <button id="toggleForm" class="btn btn-primary mb-3">Mostrar filtros</button>
+
+        <form action="/predictions/{{page_url}}" method="GET" id="predictionForm" class="form" style="display: none;">
+            <div class="form-group">
+                <label for="date">A partir del día:</label>
+                <input type="date" id="date" name="date" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="limit">Cantidad:</label>
+                <input type="number" id="limit" name="limit" min="1" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="ordenate">Ordenar por:</label>
+                <select id="ordenate" name="ordenate" class="form-control">
+                    <option value="-count">De mayor a menor</option>
+                    <option value="count">De menor a mayor</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Mandar</button>
+        </form>
+    </div>
+
+<canvas id="myChart" style="max-height:90%"></canvas>
+
+<script type='application/javascript'>
+
+
+    const labels = [
+        {% for servico in qs %}
+            "{{servico.nombre_servicio}}",
+        {% endfor %}
+
+    ];
+
+
+
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: '{{chart_title}}',
+        data: [
+        {% for servico in qs %}
+            parseFloat("{{servico.count}}"),
+        {% endfor %}
+
+        ],
+        backgroundColor: [
+        {% for color in dynamic_colors %}
+            "{{color}}",
+        {% endfor %}
+        ],
+        borderColor: [
+        {% for color in dynamic_colors %}
+            "{{color}}",
+        {% endfor %}
+        ],
+        borderWidth: 1
+      }]
+    };
+
+    const myChart = new Chart("myChart", {
+        type: "bar",
+        data: data,
+        options: {}
+    });
+</script>
+
+<script>
+    // Adicione um evento de clique ao botão para mostrar/ocultar o formulário
+    document.getElementById('toggleForm').addEventListener('click', function() {
+        var form = document.getElementById('predictionForm');
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+            this.textContent = 'Ocultar filtros';
+        } else {
+            form.style.display = 'none';
+            this.textContent = 'Mostrar filtros';
+        }
+    });
+</script>
+{% endblock %}
