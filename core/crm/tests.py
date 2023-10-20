@@ -46,6 +46,13 @@ ct_servicio = ContentType.objects.get(app_label='crm', model='Servicio')
 permission_servicio = Permission.objects.filter(codename__contains='_servicio', content_type=ct_servicio)
 permisos['servicio']=permission_servicio
 
+# permiso de la vista presupuesto
+# Obtener el ContentType del modelo al que se asignarán permisos
+ct_presupuesto = ContentType.objects.get(app_label='crm', model='Presupuesto')
+# Obtener los permisos específicos
+permission_presupuesto = Permission.objects.filter(codename__contains='_presupuesto', content_type=ct_presupuesto)
+permisos['presupuesto']=permission_servicio
+
 # permiso de la vista usuario
 # Obtener el ContentType del modelo al que se asignarán permisos
 ct_user = ContentType.objects.get(app_label='user', model='User')
@@ -64,7 +71,7 @@ grupos['administrador']=group_admin
 group_empresa,create=Group.objects.get_or_create(name="empresa")
 if not create:
   group_empresa.permissions.clear()
-group_empresa.permissions.add(*[*list(permssion_categoria),*list(permission_producto),*list(permission_sede),*list(permission_trabajador),*list(permission_user)],*list(permission_servicio))
+group_empresa.permissions.add(*[*list(permssion_categoria),*list(permission_producto),*list(permission_sede),*list(permission_trabajador),*list(permission_user)],*list(permission_servicio),*list(permission_presupuesto))
 grupos['empresa']=group_empresa
   
 # crear grupo sede (admin de los trabajadores)

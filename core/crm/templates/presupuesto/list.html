@@ -1,0 +1,32 @@
+{% extends 'list.html' %}
+{% load static %}
+{% block head_list %}
+<script src="{% static 'presupuesto/js/list.js' %}"></script>
+{% endblock %}
+
+{% block columnas %}
+<tr>
+    <th scope="col" style="width: 5%;">#</th>
+    <th scope="col" style="width: 10%;">Servicio</th>
+    <th scope="col" style="width: 10%;">Fecha servicio</th>
+    <th scope="col" style="width: 10%;">Fecha caducidad servicio</th>
+    <th scope="col" style="width: 10%;">Monto descuento servicio</th>
+    <th scope="col" style="width: 10%;">Con igv</th>
+    <th scope="col" style="width: 10%;">Subtotal servicio</th>
+    <th scope="col" style="width: 10%;">Total impuesto servicio</th>
+    <th scope="col" style="width: 10%;">Total servicio</th>
+    <th scope="col" style="width: 10%;">Estado servicio</th>
+    <th scope="col" style="width: 10%;">Nota administrador</th>
+    <th scope="col" style="width: 10%;">Nota cliente</th>
+    <th scope="col" style="width: 10%;">Terminos y condiciones</th>
+    <th scope="col" style="width: 10%;">Monto de descuento oficial</th>
+    <th scope="col" style="width: 10%;">Sede</th>
+</tr>
+{% endblock %}
+
+{% block rows %}
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}

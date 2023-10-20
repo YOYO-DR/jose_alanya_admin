@@ -246,3 +246,58 @@ class Servicio(BaseModel):
           else:
               self.user_updated=user
         super(Servicio, self).save()
+
+class Presupuesto(BaseModel):
+  servicio=models.ForeignKey(Servicio,on_delete=models.CASCADE,null=True,blank=True,verbose_name="Servicio")
+  fecha_servicio=models.DateField(verbose_name="Fecha servicio",null=False,blank=False)
+  fecha_caducidad_servicio=models.DateField(verbose_name="Fecha de caducidad del servicio",null=False,blank=False)
+  monto_descuento_servicio=models.DecimalField(verbose_name="Monto de descuento del servicio",null=False,blank=False,max_digits=10,decimal_places=1)
+  con_sin_igv_servicio=models.BooleanField(default=False,verbose_name="Con igv",null=False,blank=False)
+  sub_total_servicio=models.DecimalField(verbose_name="Subtotal del servicio",null=False,blank=False,max_digits=10,decimal_places=1)
+  total_impuesto_servicio=models.DecimalField(verbose_name="Total impuesto del servicio",null=False,blank=False,max_digits=10,decimal_places=1)
+  total_servicio=models.DecimalField(verbose_name="Total servicio",null=False,blank=False,max_digits=10,decimal_places=1)
+  estado_servicio=models.BooleanField(verbose_name="Estado del servicio",default=True)
+  nota_admin_servicio=models.TextField(verbose_name="Nota administrador del servicio")
+  nota_cliente_servicio=models.TextField(verbose_name="Nota cliente del servicio")
+  terminos_condiciones_servicio=models.TextField(verbose_name="Terminos y condiciones del servicio")
+  monto_descuento_oficial=models.DecimalField(verbose_name="Monto de descuento oficial",null=False,blank=False,max_digits=10,decimal_places=1)
+  sede=models.ForeignKey(Sede,on_delete=models.CASCADE,verbose_name="Sede",null=False,blank=False)
+  empresa=models.ForeignKey(Empresa,on_delete=models.CASCADE,verbose_name="Empresa",null=False,blank=False)
+
+  def save(self, force_insert=False, force_update=False, using=None, update_fields=None,user_test=None):
+        # hasta si necesito algo del request, puedo obtenerlo aqui con crum, y su funcion get_current_request()
+        # por si voy a ingresar datos con codigo en vez de la parte del front
+        if user_test:
+          user=user_test
+        else:
+          user = get_current_user()
+        if user.empresa:
+          self.empresa=user.empresa
+        #si el usuario no esta vacio
+        if user is not None:
+          #si no existe un pk o id, significa que se esta creando el registro, de lo contrario, se esta actualizando el registro
+          if not self.pk:
+              self.user_creation=user
+          else:
+              self.user_updated=user
+        super(Presupuesto, self).save()
+
+        
+  def __str__(self):
+        return f'Presupuesto {str(self.id)}'
+    
+  def toJSON(self):
+      item = model_to_dict(self, exclude=['user_creation','user_updated'])
+      item["servicio"]={"id":self.servicio.id,"nombre":self.servicio.nombre}
+      item["monto_descuento_servicio"]=float(self.monto_descuento_servicio)
+      item["sub_total_servicio"]=float(self.sub_total_servicio)
+      item["total_impuesto_servicio"]=float(self.total_impuesto_servicio)
+      item["monto_descuento_oficial"]=float(self.monto_descuento_oficial)
+      item['sede']={"id":self.sede.id,"nombre":self.sede.nombre}
+      item['empresa']=self.empresa.toJSON()
+      return item
+
+  class Meta:
+        verbose_name = 'Presupuesto'
+        verbose_name_plural = 'Presupuestos'
+        ordering = ['id']

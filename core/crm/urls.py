@@ -2,6 +2,7 @@ from django.urls import path
 from core.crm.views.categoria.views import *
 from core.crm.views.dashboard.views import *
 from core.crm.views.empresa.views import EmpresaCreateView, EmpresaDeleteView, EmpresaListView, EmpresaUpdateView
+from core.crm.views.presupuesto.views import PresupuestoCreateView, PresupuestoDeleteView, PresupuestoListView, PresupuestoUpdateView
 from core.crm.views.producto.views import *
 from core.crm.views.sede.views import SedeCreateView, SedeDeleteView, SedeListView, SedeUpdateView
 from core.crm.views.servicio.views import ServicioCreateView, ServicioDeleteView, ServicioListView, ServicioUpdateView
@@ -40,11 +41,17 @@ urlpatterns = [
     path('trabajador/update/<int:pk>/', TrabajadorUpdateView.as_view(), name='trabajador_update'),
     path('trabajador/delete/<int:pk>/', TrabajadorDeleteView.as_view(), name='trabajador_delete'),
 
-    #Categoria
+    #servicio
     path('servicio/list/', ServicioListView.as_view(), name='servicio_list'),
     path('servicio/add/', ServicioCreateView.as_view(), name='servicio_create'),
     path('servicio/update/<int:pk>/', ServicioUpdateView.as_view(), name='servicio_update'),
     path('servicio/delete/<int:pk>/', ServicioDeleteView.as_view(), name='servicio_delete'),
+    
+    #presupuesto
+    path('presupuesto/list/', PresupuestoListView.as_view(), name='presupuesto_list'),
+    path('presupuesto/add/', PresupuestoCreateView.as_view(), name='presupuesto_create'),
+    path('presupuesto/update/<int:pk>/', PresupuestoUpdateView.as_view(), name='presupuesto_update'),
+    path('presupuesto/delete/<int:pk>/', PresupuestoDeleteView.as_view(), name='presupuesto_delete'),
 
     #Home
     path('dashboard/', DashboardView.as_view(), name='dashboard'),

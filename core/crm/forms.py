@@ -1,7 +1,7 @@
 from typing import Any
 from django.forms import ModelForm,TextInput, Textarea,NumberInput,EmailInput,CheckboxInput
 from crum import get_current_user
-from core.crm.models import Categoria, Producto, Sede, Servicio, Trabajador,Empresa
+from core.crm.models import Categoria, Presupuesto, Producto, Sede, Servicio, Trabajador,Empresa
 from django.db.models import Q
 
 class CategoriaForm(ModelForm):
@@ -209,6 +209,35 @@ class ServicioForm(ModelForm):
             )
         }
         exclude=['user_creation','user_updated']
+
+    def save(self, commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                form.save()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data
+
+class PresupuestoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        user = get_current_user()
+        # si el usuario no es un super usuario y tiene una empresa registrada, entonces le omito la empresa en la creacion de una empresa, pero de los contrario si es un super usuario, le dejo asignar la empresa a la categoria
+        if user.empresa and not user.groups.filter(name__iexact="administrador").exists():
+            # aqui le quito la empresa de los fields
+            self.fields.pop('empresa')
+            self.fields['servicio'].queryset=Servicio.objects.filter(empresa=user.empresa)
+            self.fields['sede'].queryset = Sede.objects.filter(empresa=user.empresa)
+        self.fields['fecha_servicio'].widget.attrs['autofocus']= True
+
+    class Meta:
+        model = Presupuesto
+        fields = '__all__'
+        exclude = ['user_creation', 'user_updated']
 
     def save(self, commit=True):
         data = {}
