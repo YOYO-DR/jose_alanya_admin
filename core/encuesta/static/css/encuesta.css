@@ -1,0 +1,12 @@
+.alert.alert-success,
+.alert.alert-success h5 {
+  width: min-content;
+}
+
+.alert.alert-success h5 {
+  text-wrap: nowrap;
+}
+
+form label:hover {
+  cursor: pointer;
+}

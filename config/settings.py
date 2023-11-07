@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'core.login',
     'core.user',
     'core.predictions',
+    'core.encuesta'
 ]
 
 MIDDLEWARE = [
