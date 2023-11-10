@@ -17,13 +17,5 @@ MYSQL = {
   'PASSWORD':os.environ.get('DBPASS'),
   'HOST':os.environ.get('DBHOST'),
   'PORT':'3306'
-  },
-  'production':{
-    'ENGINE': 'django.db.backends.mysql',
-      'NAME': os.environ.get('DBNAME_P'),
-      'USER': os.environ.get('DBUSER_P'),
-      'PASSWORD': os.environ.get('DBPASS_P'),
-      'HOST': os.environ.get('DBHOST_P'),
-      'PORT': '3306'
   }
 }

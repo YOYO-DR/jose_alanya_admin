@@ -11,9 +11,9 @@
 
 
     <div class="container">
-        <button id="toggleForm" class="btn btn-primary mb-3">Mostrar filtros</button>
+        <button id="toggleForm" class="btn btn-success mb-3">Mostrar filtros</button>
 
-        <form action="/predictions/{{page_url}}" method="GET" id="predictionForm" class="form" style="display: none;">
+        <form action="/prediction/{{page_url}}" method="GET" id="predictionForm" class="form" style="display: none;">
             <div class="form-group">
                 <label for="date">A partir del día:</label>
                 <input type="date" id="date" name="date" class="form-control">
@@ -39,7 +39,8 @@
 <canvas id="myChart" style="max-height:90%"></canvas>
 
 <script type='application/javascript'>
-
+    
+    document.getElementById('date').valueAsDate = new Date();
 
     const labels = [
         {% for servico in qs %}

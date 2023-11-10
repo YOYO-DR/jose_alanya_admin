@@ -1,5 +1,5 @@
 {% load static %}
-<aside class="main-sidebar sidebar-light-primary elevation-4">
+<aside class="main-sidebar sidebar-dark-gray elevation-4">
     <a href="{% url "crm:dashboard" %}" class="brand-link">
         <img src="{% static 'media/img/logo.png' %}"
              alt="Logo"
@@ -85,6 +85,54 @@
                         <i class="nav-icon fas fa-home"></i>
                         <p>
                             Sedes
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url "predictions:prediction_value" %}" class="nav-link">
+                        <i class="nav-icon fas fa-history"></i>
+                        <p>
+                            Histórico Valor
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url "predictions:prediction_quantity" %}" class="nav-link">
+                        <i class="nav-icon fas fa-camera"></i>
+                        <p>
+                            Histórico Cantidad
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url "predictions:predictions_view" %}" class="nav-link">
+                        <i class="nav-icon fas fa-magic"></i>
+                        <p>
+                            Predicciones Prophet
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url "predictions:predictions_view_thirty" %}" class="nav-link">
+                        <i class="nav-icon fas fa-list"></i>
+                        <p>
+                            Predicciones Tensorflow
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url "predictions:prediction_publication_facebook" %}" class="nav-link">
+                        <i class="nav-icon fas fa-bell"></i>
+                        <p>
+                            Publicaciones Facebook
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url "predictions:predictions_landing" %}" class="nav-link">
+                        <i class="nav-icon fas fa-star"></i>
+                        <p>
+                            Predicciones Landing
                         </p>
                     </a>
                 </li>

@@ -1,0 +1,158 @@
+{% extends 'list.html' %}
+{% load static %}
+{% block head_list %}
+    <script src="{% static 'predictions/js/chat.min.js' %}"></script>
+{% endblock %}
+{% block card-footer %}{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card card-success">
+                <div class="card-header bg-morado-2">
+                    <h3 class="card-title">
+                        <i class="fas fa-search"></i>
+                        Predicted Next Service Tensorflow
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <table class="table" id="data-tensorflow">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width: 10%;">#</th>
+                                <th scope="col" style="width: 90%;">Next Most Probable</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for servicio in last_tensor.services.all %}
+                                <tr class="odd">
+                                    <td class="sorting_1 dtr-control">{{ forloop.counter }}</td>
+                                    <td>{{ servicio.nombre_servicio }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Frecuencia de los proximos servicios</h4>
+                    <div id="chart"
+                         data-colors='["--bs-primary", "--bs-danger", "--bs-success"]'
+                         class="apex-charts"
+                         dir="ltr"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Distribucion de los servicios mas probables</h4>
+                    <img src="{{ last_tensor.image_predicted_7_days.url  }}"
+                         alt="Predicted 7 days"
+                         style="max-height: 100%;
+                                max-width: 100%">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Efectividad del modelo de Tensorflow</h4>
+                    <img src="{{ last_tensor.image_validate_model.url  }}"
+                         alt="Validate Model"
+                         style="max-height: 100%;
+                                max-width: 100%">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Comporando el entrenamiento del modelo</h4>
+                    <img src="{{ last_tensor.image_compare_results.url  }}"
+                         alt="Compare Results"
+                         style="max-height: 100%;
+                                max-width: 100%">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="padding: 0 120px;">
+                <p style="margin: 0 auto; width=60%;margin-bottom: 30px;">
+                    Este gráfico visualiza el rendimiento del modelo en un conjunto de datos de validación. Al trazar los valores objetivo reales y los valores pronosticados en el mismo gráfico, puede evaluar visualmente qué tan bien se alinean las predicciones del modelo con los valores reales. Esto se utiliza a menudo en tareas de regresión para comprender qué tan bien el modelo captura los patrones subyacentes en los datos. El código le ayuda a inspeccionar visualmente cualquier discrepancia entre los valores reales y previstos.
+                </p>
+                <p style="margin: 0 auto; width=60%;margin-bottom: 30px;">
+                    El uso de valores entre -1 y 1 ayuda a garantizar que los cálculos de la red neuronal sean estables y que el proceso de entrenamiento sea más eficiente. Es una opción práctica que facilita que los algoritmos de optimización y las funciones de activación funcionen de manera efectiva y ayuda a lograr un mejor rendimiento del modelo.
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script type='application/javascript'>
+
+    const labels = [
+        {% for servico in qs %}            "{{servico.service.nombre_servicio}}",{% endfor %}
+    ];
+
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: '{{chart_title}}',
+        data: [
+        {% for servico in qs %}            parseFloat("{{servico.id}}"),{% endfor %}
+
+        ],
+        backgroundColor: [
+        {% for color in dynamic_colors %}            "{{color}}",{% endfor %}
+        ],
+        borderColor: [
+        {% for color in dynamic_colors %}            "{{color}}",{% endfor %}
+        ],
+        borderWidth: 1
+      }]
+    };
+
+    //const myChart = new Chart("myChart", {
+     //   type: "bar",
+      //  data: data,
+      //  options: {}
+    // });
+
+
+     var options = {
+        chart: {
+            type: 'donut'
+        },
+        series: [
+            {% for publication in last_tensor.services.all %}            {{ forloop.revcounter }},{% endfor %}
+        ],
+        labels: [
+            {% for publication in last_tensor.services.all %}            "{{ publication.nombre_servicio }}",{% endfor %}
+        ],
+        plotOptions: {
+          pie: {
+            customScale: 0.6
+          }
+        }
+
+    }
+var chart = new ApexCharts(document.querySelector("#chart"), options);
+chart.render();
+
+
+    </script>
+{% endblock %}

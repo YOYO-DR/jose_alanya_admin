@@ -1,7 +1,7 @@
 {% extends 'home.html' %}
 {% block body %}
     {% csrf_token %}
-    <body class="hold-transition sidebar-mini layout-fixed">
+    <body class="hold-transition sidebar-mini layout-fixed sidebar-collapse">
     <div class="wrapper">
         <!-- Header -->
         {% include 'vtc/header.html' %}
@@ -37,6 +37,8 @@
 
     {% endblock %}
     <script>
+
+
       {% if messages %}
     var html = '<p>';
         {% for message in messages %}
@@ -49,6 +51,24 @@
             icon: 'error'
             });
         {% endif %}
+
+
+    if (window && window.localStorage.getItem('sidebar') !== 'active') {
+        // if it active show it as active
+        $(".sidebar-mini").removeClass("sidebar-collapse");
+    }
+
+    $("#btn-collapse").click(function() {
+        $(".sidebar-mini").toggleClass("sidebar-collapse");
+         var updated = '';
+         if (window.localStorage.getItem('sidebar') === 'active') {
+             updated = 'not_active';
+         } else {
+             updated = 'active';
+         }
+         window.localStorage.setItem('sidebar', updated);
+    }); 
+
     </script>
     </body>
 {% endblock %}

@@ -1,0 +1,133 @@
+{% extends 'list.html' %}
+{% load static %}
+{% block head_list %}{% endblock %}
+{% block card-footer %}{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card card-success">
+                <div class="card-header bg-morado-2">
+                    <h3 class="card-title">{{ title }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table mb-0" id="data">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style="width: 10%;">#</th>
+                                    <th scope="col" style="width: 30%;">Most Probable Service</th>
+                                    <th scope="col" style="width: 20%;">Tipo</th>
+                                    <th scope="col" style="width: 40%;">Descripcion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for publication in last_tensor.publications.all %}
+                                    <tr>
+                                        <th scope="row">{{ forloop.counter }}</th>
+                                        <td>{{ publication.servicio_referencia }}</td>
+                                        <td>{{ publication.Tipo_publicacion }}</td>
+                                        <td>{{ publication.Descripcion_publicacion }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if last_tensor %}
+        <div class="row">
+            <div class="col-sm-8" style="margin: 0 auto;">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Title</h4>
+                        <div id="chart" style="max-height:90%;margin-bottom: 20px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-sm-6" style="">
+            <div class="card">
+                <div class="card-body">
+                    <img src="{{ last_resumen.result_image.url  }}"
+                         alt="Predicted 7 days Facebook"
+                         style="max-height: 100%;
+                                max-width: 100%">
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6" style="">
+            <div class="card">
+                <div class="card-body">
+                    <img src="{{ last_tensor.image_predicted_7_days.url  }}"
+                         alt="Predicted 7 days"
+                         style="max-height: 100%;
+                                max-width: 100%">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6" style="">
+            <div class="card">
+                <div class="card-body">
+                    <img src="{{ last_tensor.image_validate_model.url  }}"
+                         alt="Validate Model"
+                         style="max-height: 100%;
+                                max-width: 100%">
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6" style="">
+            <div class="card">
+                <div class="card-body">
+                    <img src="{{ last_tensor.image_compare_results.url  }}"
+                         alt="Compare Results"
+                         style="max-height: 100%;
+                                max-width: 100%">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div style="padding: 0 120px;">
+                <p style="margin: 0 auto; width=60%;margin-bottom: 30px;">
+                    Este gráfico visualiza el rendimiento del modelo en un conjunto de datos de validación. Al trazar los valores objetivo reales y los valores pronosticados en el mismo gráfico, puede evaluar visualmente qué tan bien se alinean las predicciones del modelo con los valores reales. Esto se utiliza a menudo en tareas de regresión para comprender qué tan bien el modelo captura los patrones subyacentes en los datos. El código le ayuda a inspeccionar visualmente cualquier discrepancia entre los valores reales y previstos.
+                </p>
+                <p style="margin: 0 auto; width=60%;margin-bottom: 30px;">
+                    El uso de valores entre -1 y 1 ayuda a garantizar que los cálculos de la red neuronal sean estables y que el proceso de entrenamiento sea más eficiente. Es una opción práctica que facilita que los algoritmos de optimización y las funciones de activación funcionen de manera efectiva y ayuda a lograr un mejor rendimiento del modelo.
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+     var options = {
+        chart: {
+            type: 'donut'
+        },
+        series: [
+            {% for publication in last_tensor.publications.all %}            {{ forloop.revcounter }},{% endfor %}
+        ],
+        labels: [
+            {% for publication in last_tensor.publications.all %}            "{{ publication.servicio_referencia }}",{% endfor %}
+        ],
+        plotOptions: {
+          pie: {
+            customScale: 0.6
+          }
+        }
+
+    }
+var chart = new ApexCharts(document.querySelector("#chart"), options);
+chart.render();
+
+
+    </script>
+{% endblock %}

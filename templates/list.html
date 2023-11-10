@@ -20,7 +20,7 @@
 <div class="card card-primary">
     <div class="card-header bg-morado-2">
     <h3 class="card-title">
-    <i class="fas fa-search"></i>
+    <i class="fas fa-list"></i>
     {{ title }}
     </h3>
     </div>
@@ -38,13 +38,17 @@
  
             </tbody>
           </table>
+          {% block card-footer %}
           <div class='card-footer'></div>
           <a href= "{{ create_url }}" class="btn btn-primary btn-flat btnTest  "><i class="fas fa-plus"></i> Nuevo registro</a>
           <a href="{{ list_url }}" class="btn btn-success"><i class="fas fa-sync"></i> Actualizar</a>
           </div>
+          {% endblock %}
     </div>
 
 </div>
+    {% block extradiv %}
+    {% endblock %}
 {% endblock %}
 
 {% block javascript %}

@@ -33,8 +33,9 @@ class User(AbstractUser):
     
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.is_superuser:
-            from core.crm.tests import grupos
+            # from core.crm.tests import grupos
             super(User,self).save()
-            self.groups.clear()
-            self.groups.add(grupos['administrador'])
+            # self.groups.clear()
+            # self.groups.add(grupos['administrador'])
+            return
         super(User,self).save()

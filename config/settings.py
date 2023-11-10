@@ -39,14 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #libs
+    'crispy_forms',
+    'crispy_bootstrap5',
     "storages",
     'widget_tweaks',
     #Mis apps
     'core.crm',
     'core.login',
     'core.user',
+    'core.encuesta',
     'core.predictions',
-    'core.encuesta'
 ]
 
 MIDDLEWARE = [
@@ -84,7 +86,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = MYSQL
+# DATABASES = MYSQL
+DATABASES = SQLITE
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -149,3 +152,6 @@ AUTH_USER_MODEL = 'user.User'
 
 # blob azure
 STATIC_URL_AZURE="https://djangoyoiner.blob.core.windows.net/jose-alanya"
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

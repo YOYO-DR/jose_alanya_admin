@@ -1,0 +1,520 @@
+{% extends 'list.html' %}
+{% load static %}
+{% block head_list %}
+    <link href="{% static 'css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="{% static 'css/app.min.css' %}" id="app-style" rel="stylesheet" type="text/css" />
+    <script src="{% static 'predictions/list_predictions.js' %}"></script>
+    <script src="{% static 'predictions/js/chat.min.js' %}"></script>
+{% endblock %}
+{% block content %}
+
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <form action="{% url 'predictions:predictions_view' %}"
+                      method="GET"
+                      id="predictionForm"
+                      class="form"
+                      style="">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-auto">
+                            <div class="form-group" style="margin-right: 20px;">
+                                <label for="date">A partir del día {{ last_resumen.period_init }} hasta el {{ last_resumen.period_end }}:</label>
+                                <input type="date"
+                                       id="datePicker"
+                                       min="{{ last_resumen.period_init.isoformat }}"
+                                       max="{{ last_resumen.period_end.isoformat }}"
+                                       value="{{ initial_date.isoformat }}"
+                                       name="date"
+                                       class="form-control"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="col-auto" style="margin-right: 20px;">
+                            <div class="form-group">
+                                <label for="date">Dias</label>
+                                <input type="number"
+                                       id="datePicker"
+                                       min="5"
+                                       max="30"
+                                       name="number_days"
+                                       class="form-control"
+                                       value="{{ initial_days }}"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="col-auto" style="margin-right: 20px;">
+                            <button style="margin-top:15px;" type="submit" class="btn btn-success">Mandar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header bg-morado-2">
+                <h3 class="card-title">
+                    {{ title }}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table mb-0" id="data">
+                        <thead>
+                                <tr>
+                                    <th scope="col" style="width: 5%;">#</th>
+                                    <th scope="col" style="width: 25%;">Fecha</th>
+                                    <th scope="col" style="width: 10%;">Muy Probable</th>
+                                    <th scope="col" style="width: 20%;">Menos Probable 1</th>
+                                    <th scope="col" style="width: 20%;">Menos Probable 2</th>
+                                </tr>
+                        </thead>
+                        <tbody>
+                                {% for publication in qs %}
+                                    <tr>
+                                        <th scope="row">{{ forloop.counter }}</th>
+                                        <td>{{ publication.date_predict.isoformat }}</td>
+                                        <td>{{ publication.service }}</td>
+                                        <td>{{ publication.less_probable_low }}</td>
+                                        <td>{{ publication.less_probable_high }}</td>
+                                    </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Frecuencia de los servicios</h4>
+                <div id="line-chart" data-colors='["--bs-success"]' class="e-charts"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <div id="mix-line-bar"
+                     data-colors='["--bs-success","--bs-primary", "--bs-danger"]'
+                     class="e-charts"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Dark table</h4>
+                <div id="chart"
+                     data-colors='["--bs-primary", "--bs-danger", "--bs-success"]'
+                     class="apex-charts"
+                     dir="ltr"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4>Basic example</h4>
+                <div id="chart-treemap"
+                                          data-colors='["--bs-primary", "--bs-danger", "--bs-success"]'
+
+                     class="apex-charts"
+                     style=""></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4>Basic example</h4>
+
+    <div id="chart-donut" class="apex-charts"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4>Basic example</h4>
+
+    <canvas id="myChart" style="max-height:90%;margin: 20px;padding: 20px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-xl-12">
+
+    <div style="padding: 20px;maring:20px;text-align: center;">
+        <h3>Los siguientes graficos son creados en el momento en que se entrena el modelo de Inteligencia Artificial</h3>
+        <p>Los graficos no cambian cuando se usa el filtro</p>
+    </div>
+
+    </div>
+    </div>
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4>Distribucion de Servicios en el Pasado</h4>
+
+      <img src="{{ last_resumen.historic_image.url  }}"
+             alt="Predicted 7 days"
+             style="max-height: 100%;
+                    max-width: 100%">
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4>Servicios Probables en el futuro</h4>
+        <img src="{{ last_resumen.result_image.url  }}"
+             alt="Predicted 7 days"
+             style="max-height: 100%;
+                    max-width: 100%">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="{% static 'libs/echarts/dist/echarts.min.js' %}"></script>
+    <script type='application/javascript'>
+    <!-- document.getElementById('datePicker').valueAsDate = new Date(); -->
+
+    function getChartColorsArray(chartId) {
+    if (document.getElementById(chartId) !== null) {
+        var colors = document.getElementById(chartId).getAttribute("data-colors");
+        if (colors) {
+            colors = JSON.parse(colors);
+            return colors.map(function (value) {
+                var newValue = value.replace(" ", "");
+                if (newValue.indexOf(",") === -1) {
+                    var color = getComputedStyle(document.documentElement).getPropertyValue(
+                        newValue
+                    );
+                    if (color) return color;
+                    else return newValue;
+                } else {
+                    var val = value.split(",");
+                    if (val.length == 2) {
+                        var rgbaColor = getComputedStyle(
+                            document.documentElement
+                        ).getPropertyValue(val[0]);
+                        rgbaColor = "rgba(" + rgbaColor + "," + val[1] + ")";
+                        return rgbaColor;
+                    } else {
+                        return newValue;
+                    }
+                }
+            });
+        } else {
+            console.warn('data-colors Attribute not found on:', chartId);
+        }
+    }
+}
+
+
+    const labels = [
+        {% for servico in qs %}            "{{servico.service.nombre_servicio}}",{% endfor %}
+    ];
+
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: '{{chart_title}}',
+        data: [
+        {% for servico in qs %}            parseFloat("{{servico.id}}"),{% endfor %}
+
+        ],
+        backgroundColor: [
+        {% for color in dynamic_colors %}            "{{color}}",{% endfor %}
+        ],
+        borderColor: [
+        {% for color in dynamic_colors %}            "{{color}}",{% endfor %}
+        ],
+        borderWidth: 1
+      }]
+    };
+
+    const myChart = new Chart("myChart", {
+        type: "bar",
+        data: data,
+        options: {}
+    });
+
+var options = {
+        chart: {
+        type: 'line'
+    },
+    series: [{
+    name: 'servicios',
+    data: [
+        {% for publication in qs %}
+            "{{ publication.service.id_servicio }}",
+        {% endfor %}
+    ]
+    }],
+    xaxis: {
+        categories: [
+         {% for publication in qs %}
+        "{{ publication.date_predict|date:'d-M-Y' }}",
+        {% endfor %}
+        ]
+    }
+}
+var chart = new ApexCharts(document.querySelector("#chart"), options);
+chart.render();
+
+    // Treemap Chart
+     var optionsTreemap = {
+    chart: {
+      height: 350,
+      type: "treemap",
+    },
+    series: [
+      {
+        data: [
+         {% for i in all_data %}
+          {
+            x: "{{ i.service }}",
+            y: {{ i.count }},
+          },
+        {% endfor %}
+        ],
+      },
+    ]
+  }
+
+    var chartTreemap = new ApexCharts(document.querySelector("#chart-treemap"), optionsTreemap);
+    chartTreemap.render();
+
+
+    // Donut Chart
+        var optionsDonut = {
+        chart: {
+            type: 'donut'
+        },
+        series: [
+            {% for p in all_data %}
+            {{ p.count }},
+            {% endfor %}
+        ],
+        labels: [
+            {% for p in all_data %}
+            "{{ p.service }}",
+            {% endfor %}
+        ],
+        plotOptions: {
+          pie: {
+            customScale: 0.8
+          }
+        }
+
+    }
+var chart = new ApexCharts(document.querySelector("#chart-donut"), optionsDonut);
+chart.render();
+
+
+var chartDom = document.getElementById('line-chart');
+var myEChart = echarts.init(chartDom);
+var option;
+
+option = {
+  xAxis: {
+    type: 'category',
+    data: [
+        {% for p in all_data %}
+            "{{ p.service }}",
+        {% endfor %}
+
+    ]
+  },
+  yAxis: {
+    type: 'value'
+  },
+  series: [
+    {
+      data: [
+            {% for p in all_data %}
+            {{ p.count }},
+            {% endfor %}
+      ],
+      type: 'line'
+    }
+  ]
+};
+
+
+option && myEChart.setOption(option, true);
+
+
+
+    // mix line & bar
+var mixLineChartColors = getChartColorsArray("mix-line-bar");
+if (mixLineChartColors) {
+    var dom = document.getElementById("mix-line-bar");
+    var mywy2Chart = echarts.init(dom);
+    var app = {};
+    option = null;
+    app.title = 'Data view';
+
+    option = {
+        // Setup grid
+        grid: {
+            zlevel: 0,
+            x: 80,
+            x2: 50,
+            y: 30,
+            y2: 30,
+            borderWidth: 0,
+            backgroundColor: 'rgba(0,0,0,0)',
+            borderColor: 'rgba(0,0,0,0)',
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#999'
+                }
+            }
+        },
+        toolbox: {
+            orient: 'center',
+            left: 0,
+            top: 20,
+            feature: {
+                dataView: { readOnly: false, title: "Data View" },
+                magicType: { type: ['line', 'bar'], title: { line: "For line chart", bar: "For bar chart" } },
+                restore: { title: "restore" },
+                saveAsImage: { title: "Download Image" }
+            }
+        },
+        color: mixLineChartColors,
+        legend: {
+            data: ['Menos low', 'Menos high', 'Mas Probable'],
+            textStyle: { color: '#8791af' }
+        },
+        xAxis: [
+            {
+                type: 'category',
+                data: [
+                    {% for publication in qs %}'{{ publication.date_predict.isoformat }}',{% endfor %}
+                ],
+                axisPointer: {
+                    type: 'shadow'
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#50a5f1'
+                    },
+                },
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: 'Menos Probable high',
+                min: 0,
+                max: {{ cant_predicted_half }},
+                interval: 50,
+                axisLine: {
+                    lineStyle: {
+                        color: '#8791af'
+                    },
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: "rgba(166, 176, 207, 0.1)"
+                    }
+                },
+                axisLabel: {
+                    formatter: '{value}'
+                }
+            },
+            {
+                type: 'value',
+                name: 'Mas Probable',
+                min: 0,
+                max: {{ cant_predicted }},
+                interval: 20,
+                axisLine: {
+                    lineStyle: {
+                        color: '#8791af'
+                    },
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: "rgba(166, 176, 207, 0.1)"
+                    }
+                },
+                axisLabel: {
+                    formatter: '{value} id'
+                }
+            }
+        ],
+        series: [
+            {
+                name: 'Menos Probable low',
+                type: 'bar',
+                data: [
+                {% for publication in qs %}{{ publication.less_probable_low.id_servicio }},{% endfor %}
+                ]
+            },
+            {
+                name: 'Menos probable high',
+                type: 'bar',
+                data: [
+                    {% for publication in qs %}{{ publication.less_probable_high.id_servicio }},{% endfor %}
+                ]
+            },
+            {
+                name: 'Mas probable',
+                type: 'line',
+                yAxisIndex: 1,
+                data: [
+                    {% for publication in qs %}{{ publication.service.id_servicio }},{% endfor %}
+                ]
+            }
+        ]
+    };
+    ;
+    if (option && typeof option === "object") {
+        mywy2Chart.setOption(option, true);
+    }
+}
+
+
+</script>
+
+{% endblock %}
