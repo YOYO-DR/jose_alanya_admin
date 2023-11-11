@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from core.crm.models import Producto
 
 from random import randint
@@ -29,7 +29,8 @@ meses_espanol = {
         12: 'diciembre',
     }
 
-class DashboardView(TemplateView):
+
+class DashboardView(LoginRequiredMixin, TemplateView):
     template_name= 'dashboard.html'
 
     @method_decorator(csrf_exempt)
